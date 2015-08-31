@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<title>服务员界面</title>
+		<link type="text/css" href="resources/css/jquery-ui.min.css" rel="stylesheet" />
+		<link type="text/css" href="resources/css/ui.jqgrid.css" rel="stylesheet" />
+
+		<!-- Framework CSS -->
+		<link rel="stylesheet" href="resources/css/blueprint/screen.css" type="text/css" media="screen, projection"/>
+		<link rel="stylesheet" href="resources/css/blueprint/print.css" type="text/css" media="print"/>
+		<!--[if lte IE 8]><link rel="stylesheet" href="resources/css/blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
+		<link rel="stylesheet" href="resources/css/rain.css" type="text/css" media="screen, projection"/>
+		<!--[if lt IE 9]><script type="text/javascript" src="resources/js/html5.js"></script><![endif]-->
+
+		<!-- Custom CSS -->
+		<link type="text/css" href="resources/css/style.css" rel="stylesheet" />
+
+		<script src="resources/js/jquery/jquery-2.0.3.min.js" type="text/javascript"></script>
+		<script src="resources/js/jquery/jquery-ui.min.js" type="text/javascript"></script>
+		<script src="resources/js/jquery/jquery.tmpl.min.js" type="text/javascript"></script>
+		<script src="resources/js/jquery/jquery.jqGrid.src.js" type="text/javascript"></script>
+		<script src="resources/js/jquery/i18n/grid.locale-cn.js" type="text/javascript"></script>
+		
+		<script src="resources/js/date.js" type="text/javascript"></script>
+		
+		<script src="resources/js/common.js" type="text/javascript"></script>
+		<script src="resources/js/order.js" type="text/javascript"></script>
+	</head>
+
+	<body class="body">
+		<div class="header headerBlue">
+			<nav class="listStyleNo positionR clearfix">
+				<a href="index.html" class="headerLink headerLinkBlue left paddingRight paddingLeft displayBlock textDecNone">顾客定位</a>
+				<a href="order.html" class="headerLink headerLinkBlue left paddingRight paddingLeft displayBlock textDecNone">订单管理</a>
+				<a href="cook.html?category=1" class="headerLink headerLinkBlue left paddingRight paddingLeft displayBlock textDecNone">厨师1</a>
+				<a href="cook.html?category=2" class="headerLink headerLinkBlue left paddingRight paddingLeft displayBlock textDecNone">厨师2</a>
+				<a href="waiter.html" class="headerLink headerLinkBlue left paddingRight paddingLeft displayBlock textDecNone">服务员</a>
+			</nav>
+		</div>
+		<div class="headerM headerGrey">
+			<div class="container positionR">
+				<div id="customHeader">
+					<a class="textDecNone displayBlock paddingTopLL fontsizeXxlarge" href="./">智能咖啡</a>
+				</div>
+			</div>
+		</div>
+
+		<div class="container marginTop">
+			<div class="content">
+
+				<div class="main">
+					<div id="notification"> 
+				    	<h3>通告栏：</h3>
+						<ul id="finished-orders"></ul>
+				    </div> 
+				</div>
+
+				<footer class="footer socialFooter clear borderTop">
+					<p class="bottom paddingLeftS">
+						Copyright 2015 XXX All rights reserved.
+					</p>
+				</footer>
+			</div>
+		</div>
+	</body>
+	
+	<script id="orderContentTemplate" type="text/x-jquery-tmpl">
+    	<li>
+    		{{if finish == false}}
+				<h3>Card ID: ${cardId} | Order ID: ${orderId} | ${formatDate(date)}  <button id="${orderId}" reset="0" class="cook">制作完毕</button></h3>
+			{{else}}
+				<h3>Card ID: ${cardId} | Order ID: ${orderId} | ${formatDate(date)}  <button id="${orderId}" reset="1" class="cook">还原</button></h3>
+			{{/if}}
+			
+			{{each(name, price, copies, process) menus}}
+                {{if process == 1}}
+					<p><span>${name}</span><span>${price}¥</span><span>${copies}份</span><span>已经提交</span></p>
+				{{else process == 2}}
+					<p><span>${name}</span><span>${price}¥</span><span>${copies}份</span><span>正在制作</span><span></p>  
+				{{else}}
+					<p><span>${name}</span><span>${price}¥</span><span>${copies}份</span><span>已经完成</span></p>
+				{{/if}}
+		    {{/each}}
+		</li>
+	</script>
+
+</html>
