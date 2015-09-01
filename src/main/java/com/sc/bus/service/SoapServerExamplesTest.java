@@ -1,5 +1,4 @@
 package com.sc.bus.service;
-import org.junit.Test;
 import org.reficio.ws.builder.SoapBuilder;
 import org.reficio.ws.builder.SoapOperation;
 import org.reficio.ws.builder.core.Wsdl;
@@ -12,55 +11,28 @@ import org.springframework.ws.soap.SoapMessage;
 
 import javax.wsdl.WSDLException;
 import javax.xml.transform.Source;
+
 import java.net.URL;
 
-/**
- * @author Tom Bujok
- * @since 1.0.0
- */
 public class SoapServerExamplesTest {
 
-    @Test
-    public void createServer() {
-        SoapServer server = SoapServer.builder()
-                .httpPort(9090)
-                .build();
-        server.start();
-        server.stop();
-    }
-
-    @Test
-    public void createServer_registerAutoResponder() throws WSDLException {
-        SoapServer server = SoapServer.builder()
-                .httpPort(9090)
-                .build();
+    public static void main(String argvp[]) throws WSDLException {
+        SoapServer server = SoapServer.builder().httpPort(9090).build();
         server.start();
 
-        URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("/", "wsdl/stockquote-service.wsdl");
-        Wsdl parser = Wsdl.parse(wsdlUrl);
-        SoapBuilder builder = parser.binding().localPart("StockQuoteSoapBinding").find();
-        AutoResponder responder = new AutoResponder(builder);
-
-        server.registerRequestResponder("/service", responder);
-        server.stop();
-    }
-
-    @Test
-    public void createServer_registerCustomResponder() throws WSDLException {
-        SoapServer server = SoapServer.builder()
-                .httpPort(9090)
-                .build();
-        server.start();
-
-        URL wsdlUrl = ResourceUtils.getResourceWithAbsolutePackagePath("/", "wsdl/stockquote-service.wsdl");
+        URL wsdlUrl = ResourceUtils.getResource("smartcoffee-service.wsdl");
         Wsdl parser = Wsdl.parse(wsdlUrl);
         final SoapBuilder builder = parser.binding().localPart("StockQuoteSoapBinding").find();
 
+        AutoResponder responder = new AutoResponder(builder);
+
+        
         AbstractResponder customResponder = new AbstractResponder(builder) {
             @Override
             public Source respond(SoapOperation invokedOperation, SoapMessage message) {
                 try {
                     // build the response using builder
+                	System.out.println(invokedOperation);
                     String response = builder.buildOutputMessage(invokedOperation);
                     // here you can tweak the response -> for example with XSLT
                     //...
@@ -73,7 +45,7 @@ public class SoapServerExamplesTest {
         };
 
         server.registerRequestResponder("/service", customResponder);
-        server.stop();
+        //server.stop();
     }
 
 }

@@ -1,0 +1,65 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<definitions name="StockQuote" targetNamespace="http://tempurl.org"
+             xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+             xmlns:tns="http://tempurl.org"
+             xmlns:types="http://tempurl.org"
+             xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+             xmlns="http://schemas.xmlsoap.org/wsdl/">
+
+	<types>
+		<schema targetNamespace="http://tempurl.org" xmlns="http://www.w3.org/2001/XMLSchema">
+			<element name='astr_request' >
+	<complexType>
+		<sequence maxOccurs='unbounded' >
+			<element name='book' >
+				<complexType>
+					<sequence>
+						<element name='name' type='string' />
+						<element name='author' type='string' />
+						<element name='price' type='string' />
+					</sequence>
+				</complexType>
+			</element>
+		</sequence>
+	</complexType>
+</element>
+			
+			<element name="TradePrice">
+				<complexType>
+					<all>
+						<element name="price" type="float"/>
+					</all>
+				</complexType>
+			</element>
+		</schema>
+	</types>
+
+    <message name="postesalescreateInput">
+        <part name="body" element="types:astr_request"/>
+    </message>
+    <message name="postesalescreateOutput">
+        <part name="body" element="types:TradePrice"/>
+    </message>
+
+    <portType name="SmartCoffeePortType">
+        <operation name="postesalescreate">
+            <input message="tns:postesalescreateInput"/>
+            <output message="tns:postesalescreateOutput"/>
+        </operation>
+    </portType>
+
+    <binding name="SmartCoffeeSoapBinding" type="tns:SmartCoffeePortType">
+        <soap:binding style="rpc" transport="http://schemas.xmlsoap.org/soap/http"/>
+
+        <operation name="postesalescreate">
+            <soap:operation soapAction="smart:coffee:postesalescreate" />
+            <input>
+                <soap:body use="literal"/>
+            </input>
+            <output>
+                <soap:body use="literal"/>
+            </output>
+        </operation>
+    </binding>
+
+</definitions>
