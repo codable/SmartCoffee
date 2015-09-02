@@ -1,0 +1,131 @@
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:tns="http://tempurl.org"
+           targetNamespace="http://tempurl.org" 
+           xmlns:soap12="http://www.w3.org/2003/05/soap-envelope"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           elementFormDefault="qualified">
+
+
+	<xs:element name="postesalescreate">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="astr_request" type="tns:astr_request"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+    
+    <xs:element name="postesalescreateResponse">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element name="postesalescreateResult" type="tns:postesalescreateResult"/>
+            </xs:sequence>
+        </xs:complexType>
+    </xs:element>
+	
+    
+    <xs:complexType name="astr_request">
+	  <xs:sequence>
+        <xs:element name="header" type="tns:header"/>
+        <xs:element name="esalestotal" type="tns:esalestotal"/>
+        <xs:element name="esalesitems" type="tns:esalesitems"/>
+        <xs:element name="esalestenders" type="tns:esalestenders"/>
+        <xs:element name="esalesdiscounttenders" type="tns:esalesdiscounttenders"/>
+      </xs:sequence>
+	</xs:complexType>
+	
+    <xs:complexType name="header">
+        <xs:sequence>
+            <xs:element name="licensekey" type="xs:string"/>
+            <xs:element name="username" type="xs:string"/>
+            <xs:element name="password" type="xs:string"/>
+            <xs:element name="lang" type="xs:string"/>
+            <xs:element name="pagerecords" type="xs:int"/>
+            <xs:element name="pageno" type="xs:int"/>
+            <xs:element name="updatecount" type="xs:int"/>
+            <xs:element name="messagetype" type="xs:string"/>
+            <xs:element name="messageid" type="xs:string"/>
+            <xs:element name="version" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="esalestotal">
+        <xs:sequence>
+            <xs:element name="txdate_yyyymmdd" type="xs:string"/>
+            <xs:element name="txtime_hhmmss" type="xs:string"/>
+            <xs:element name="mallid" type="xs:string"/>
+            <xs:element name="storecode" type="xs:string"/>
+            <xs:element name="tillid" type="xs:string"/>
+            <xs:element name="txdocno" type="xs:string"/>
+            <xs:element name="cashier" type="xs:string"/>
+            <xs:element name="vipcode" type="xs:string"/>
+            <xs:element name="salesman" type="xs:string"/>
+            <xs:element name="netqty" type="xs:decimal"/>
+            <xs:element name="netamount" type="xs:decimal"/>
+            <xs:element name="bonusearn" type="xs:decimal"/>
+            <xs:element name="extendparam" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    
+    <xs:complexType name="esalesitems">
+        <xs:sequence>
+            <xs:element name="esalesitem" type="tns:esalesitem" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="esalesitem">
+        <xs:sequence>
+            <xs:element name="lineno" type="xs:int"/>
+            <xs:element name="itemcode" type="xs:string"/>
+            <xs:element name="qty" type="xs:decimal"/>
+            <xs:element name="discountamount" type="xs:decimal"/>
+            <xs:element name="netamount" type="xs:decimal"/>
+            <xs:element name="extendparam" type="xs:string"/>
+            <xs:element name="salesitemremark" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="esalestenders">
+        <xs:sequence>
+            <xs:element name="esalestender" type="tns:esalestender" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+            
+    <xs:complexType name="esalestender">
+        <xs:sequence>
+            <xs:element name="lineno" type="xs:int"/>
+            <xs:element name="tendercode" type="xs:string"/>
+            <xs:element name="payamount" type="xs:decimal"/>
+            <xs:element name="baseamount" type="xs:decimal"/>
+            <xs:element name="excessamount" type="xs:decimal"/>
+            <xs:element name="extendparam" type="xs:string"/>
+            <xs:element name="remark" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="esalesdiscounttenders">
+        <xs:sequence>
+            <xs:element name="esalesdiscounttender" type="tns:esalestender" maxOccurs="unbounded"/>
+        </xs:sequence>
+    </xs:complexType>
+    
+    <xs:complexType name="postesalescreateResult">
+	  <xs:sequence>
+        <xs:element name="header" type="tns:responseHeader"/>
+      </xs:sequence>
+	</xs:complexType>
+	
+    <xs:complexType name="responseHeader">
+        <xs:sequence>
+            <xs:element name="responsecode" type="xs:string"/>
+            <xs:element name="responsemessage" type="xs:string"/>
+            <xs:element name="pagerecords" type="xs:int"/>
+            <xs:element name="pageno" type="xs:int"/>
+            <xs:element name="updatecount" type="xs:int"/>
+            <xs:element name="maxrecords" type="xs:int"/>
+            <xs:element name="maxpageno" type="xs:int"/>
+            <xs:element name="messagetype" type="xs:string"/>
+            <xs:element name="messageid" type="xs:string"/>
+            <xs:element name="version" type="xs:string"/>
+        </xs:sequence>
+    </xs:complexType>
+</xs:schema>
