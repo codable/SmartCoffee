@@ -2,7 +2,9 @@ package com.sc.model;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document
 public class Location {
 	@Id
 	private String id;
@@ -17,8 +19,6 @@ public class Location {
 		this.locationId = locationId;
 		this.cardId = customerId;
 	}
-	
-	
 	
 	public String getId() {
 		return id;

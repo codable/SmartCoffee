@@ -116,7 +116,7 @@
 	
     <xs:complexType name="responseHeader">
         <xs:sequence>
-            <xs:element name="responsecode" type="xs:string"/>
+            <xs:element name="responsecode" type="xs:int"/>
             <xs:element name="responsemessage" type="xs:string"/>
             <xs:element name="pagerecords" type="xs:int"/>
             <xs:element name="pageno" type="xs:int"/>

@@ -1,32 +1,27 @@
 package com.sc.model;
 
 public class Menu {
-	private String id;
+	private String productId;
 	private String name;
 	private Double price;
-	private Integer copies;
-	private Integer process;
-	private String category;
+	private Integer amount;
 	
 	public Menu() {}
 
-	public Menu(String id, String name, Double price, Integer copies,
-			Integer process, String category) {
-		super();
-		this.id = id;
+	public Menu(String productId, String name, Double price,
+			Integer amount, Boolean finish) {
+		this.productId = productId;
 		this.name = name;
 		this.price = price;
-		this.copies = copies;
-		this.process = process;
-		this.category = category;
+		this.amount = amount;
 	}
 
-	public String getId() {
-		return id;
+	public String getProductId() {
+		return productId;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setProductId(String productId) {
+		this.productId = productId;
 	}
 
 	public String getName() {
@@ -45,40 +40,20 @@ public class Menu {
 		this.price = price;
 	}
 
-	public Integer getCopies() {
-		return copies;
+	public Integer getAmount() {
+		return amount;
 	}
 
-	public void setCopies(Integer copies) {
-		this.copies = copies;
-	}
-
-	public Integer getProcess() {
-		return process;
-	}
-
-	public void setProcess(Integer process) {
-		this.process = process;
-	}
-
-	public String getCategory() {
-		return category;
-	}
-
-	public void setCategory(String category) {
-		this.category = category;
+	public void setAmount(Integer amount) {
+		this.amount = amount;
 	}
 
 	@Override
 	public String toString() {
-		return "Menu [id=" + id + ", name=" + name + ", price=" + price
-				+ ", copies=" + copies + ", process=" + process + ", category="
-				+ category + "]";
+		return "Menu [productId=" + productId + ", name=" + name
+				+ ", price=" + price + ", amount=" + amount + "]";
 	}
 
-	
-	
-	
 	
 	
 

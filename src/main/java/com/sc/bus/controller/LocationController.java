@@ -1,7 +1,6 @@
 package com.sc.bus.controller;
 
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,8 +11,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sc.bus.service.LocationService;
+import com.sc.bus.service.MapsService;
+import com.sc.bus.service.OrderService;
 import com.sc.model.Location;
 import com.sc.model.LocationWrapper;
+import com.sc.model.Maps;
 
 
 @Controller
@@ -22,17 +24,22 @@ public class LocationController {
 
     @Autowired
     private LocationService locationService;
+    @Autowired
+    private OrderService orderService;
+    @Autowired
+    private MapsService mapsService;
     
-    @RequestMapping(value = "", method = RequestMethod.GET)
-    public @ResponseBody List<Location> getAllLocaltion() {
-    	List<Location> locations = new ArrayList<Location>();
-    	for(Location location: locationService.findAll()) {
-    		
-    		locations.add(locationTransfer(location));
-    	}
-    	return locations;
+    /*
+     * Client will call it to get all locations' maps.
+     */
+    @RequestMapping(value = "/maps", method = RequestMethod.GET)
+    public @ResponseBody List<Maps> getAllLocationMap() {
+    	return mapsService.findAll();
     }
     
+    /*
+     * Gateway will push data to backend(me).
+     */
     @RequestMapping(value="", method=RequestMethod.POST,consumes="application/json",produces="application/json")
     @ResponseBody
     public  void receiveLocaltions(@RequestBody LocationWrapper wrapper) {
@@ -58,10 +65,5 @@ public class LocationController {
 			
 		}
 	}
-    
-    private Location locationTransfer(Location location) {
-    	String seatId = location.getLocationId() + "_" + location.getCardId();
-    	return new Location(seatId, location.getCardId());
-    }
     
 }

@@ -4,7 +4,9 @@ import java.util.List;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+@Document
 public class Order {
 	@Id
 	private String id;
@@ -12,19 +14,28 @@ public class Order {
 	private String orderId;
 	private String cardId;
 	private List<Menu> menus;
-	private Long date;
-	private boolean finish;
+	private Long orderDate;
+	private Double totalPrice;
+	private Boolean finish;
 
 	public Order() {}
 
-	public Order(String orderId, String cardId, List<Menu> menus, Long date,
-			boolean finish) {
-		super();
+	public Order(String orderId, String cardId, List<Menu> menus,
+			Long orderDate, Double totalPrice, Boolean finish) {
 		this.orderId = orderId;
 		this.cardId = cardId;
 		this.menus = menus;
-		this.date = date;
+		this.orderDate = orderDate;
+		this.totalPrice = totalPrice;
 		this.finish = finish;
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
 	}
 
 	public String getOrderId() {
@@ -51,26 +62,35 @@ public class Order {
 		this.menus = menus;
 	}
 
-	public Long getDate() {
-		return date;
+	public Long getOrderDate() {
+		return orderDate;
 	}
 
-	public void setDate(Long date) {
-		this.date = date;
+	public void setOrderDate(Long orderDate) {
+		this.orderDate = orderDate;
 	}
 
-	public boolean isFinish() {
+	public Double getTotalPrice() {
+		return totalPrice;
+	}
+
+	public void setTotalPrice(Double totalPrice) {
+		this.totalPrice = totalPrice;
+	}
+
+	public Boolean isFinish() {
 		return finish;
 	}
 
-	public void setFinish(boolean finish) {
+	public void setFinish(Boolean finish) {
 		this.finish = finish;
 	}
 
 	@Override
 	public String toString() {
-		return "Order [orderId=" + orderId + ", cardId=" + cardId + ", menus="
-				+ menus + ", date=" + date + ", finish=" + finish + "]";
+		return "Order [id=" + id + ", orderId=" + orderId + ", cardId="
+				+ cardId + ", menus=" + menus + ", orderDate=" + orderDate
+				+ ", totalPrice=" + totalPrice + ", finish=" + finish + "]";
 	}
 
 	

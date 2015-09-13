@@ -91,33 +91,35 @@
         -->
         
         <dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-ws</artifactId>
-			<version>1.2.0.RELEASE</version>
-		</dependency>
+	        <groupId>org.springframework.ws</groupId>
+	        <artifactId>spring-ws-core</artifactId>
+	        <version>2.2.2.RELEASE</version>
+	    </dependency>
+        
 		<dependency>
 		    <groupId>wsdl4j</groupId>
 		    <artifactId>wsdl4j</artifactId>
 		    <version>1.6.1</version>
 		</dependency>
 		<dependency>
-			<groupId>javax.xml.bind</groupId>
-			<artifactId>jaxb-api</artifactId>
-			<version>2.2.12</version>
+		    <groupId>org.apache.ws.xmlschema</groupId>
+		    <artifactId>xmlschema-core</artifactId>
+		    <version>2.2.1</version>
 		</dependency>
 		
         <!-- Needed by Spring for MVC serialization -->
         <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-core-asl</artifactId>
-            <version>1.9.7</version>
-        </dependency>
-        <dependency>
-            <groupId>org.codehaus.jackson</groupId>
-            <artifactId>jackson-mapper-asl</artifactId>
-            <version>1.9.7</version>
-        </dependency>
-        
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>2.6.1</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.6.1</version>
+		</dependency>
+				
+		
         <!-- Servlet -->
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -139,15 +141,16 @@
                 
         <!-- logging -->
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-            <version>1.2.16</version>
-            <scope>runtime</scope>
-        </dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>2.3</version>
+			<scope>runtime</scope>
+		</dependency>
+
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.6.6</version>
+            <version>1.7.12</version>
             <scope>runtime</scope>
         </dependency>
             

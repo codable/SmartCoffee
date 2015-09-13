@@ -10,6 +10,7 @@ public class Constants {
 
 	public static final String LocationCollectionName = "location";
 	public static final String OrderCollectionName = "order";
+	public static final String MapsCollectionName = "maps";
 
 
 }

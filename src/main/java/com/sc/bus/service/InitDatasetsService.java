@@ -39,13 +39,14 @@ public class InitDatasetsService {
 		List<Menu> list2 = new ArrayList<Menu>();
 		List<Menu> list3 = new ArrayList<Menu>();
 		List<Menu> list4 = new ArrayList<Menu>();
-		Menu menu1 = new Menu("1", "香草拿铁", 22.0, 1, 1, "1");
-		Menu menu2 = new Menu("2", "美式咖啡", 18.0, 1, 2, "1");
-		Menu menu3 = new Menu("3", "卡布奇诺", 12.0, 1, 3, "1");
-		Menu menu4 = new Menu("4", "浓缩咖啡", 20.0, 1, 2, "1");
-		Menu menu5 = new Menu("5", "伯爵红茶", 50.0, 1, 2, "2");
-		Menu menu6 = new Menu("6", "草莓绿茶", 40.0, 1, 3, "2");
-		Menu menu7 = new Menu("7", "恋恋抹茶", 36.0, 1, 3, "2");
+		
+		Menu menu1 = new Menu("11", "香草拿铁", 22.0, 1, false);
+		Menu menu2 = new Menu("12", "美式咖啡", 18.0, 1, false);
+		Menu menu3 = new Menu("13", "卡布奇诺", 12.0, 1, false);
+		Menu menu4 = new Menu("14", "浓缩咖啡", 20.0, 1, false);
+		Menu menu5 = new Menu("15", "伯爵红茶", 50.0, 1, false);
+		Menu menu6 = new Menu("16", "草莓绿茶", 40.0, 1, false);
+		Menu menu7 = new Menu("17", "恋恋抹茶", 36.0, 1, false);
 		list1.add(menu1);
 		list1.add(menu2);
 		
@@ -64,10 +65,10 @@ public class InitDatasetsService {
 		list4.add(menu6);
 		list4.add(menu7);
 		
-		Order order1 = new Order("111", "1", list1, new Date().getTime(), false);
-		Order order2 = new Order("222", "2", list2, new Date().getTime(), false);
-		Order order3 = new Order("333", "3", list3, new Date().getTime(), false);
-		Order order4 = new Order("444", "4", list4, new Date().getTime(), false);
+		Order order1 = new Order("111", "1", list1, new Date().getTime(), 58.0, false);
+		Order order2 = new Order("222", "2", list2, new Date().getTime(), 632.2, false);
+		Order order3 = new Order("333", "3", list3, new Date().getTime(), 12.2, false);
+		Order order4 = new Order("444", "4", list4, new Date().getTime(), 66.3, false);
 		mongodb.save(order1, Constants.OrderCollectionName);
 		mongodb.save(order2, Constants.OrderCollectionName);
 		mongodb.save(order3, Constants.OrderCollectionName);
