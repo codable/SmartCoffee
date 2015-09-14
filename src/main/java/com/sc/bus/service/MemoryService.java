@@ -26,7 +26,7 @@ public class MemoryService {
     
 	@PostConstruct 
     private void init(){ 
-		initLocationOrders();
+		//initLocationOrders();
     }
 	
 	private void initLocationOrders() {

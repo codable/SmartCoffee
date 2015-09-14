@@ -17,7 +17,7 @@ public class CoffeeEndpoint {
 	@PayloadRoot(namespace = NAMESPACE_URI, localPart = "postesalescreate")
 	@ResponsePayload
 	public PostesalescreateResponse getPostSales(@RequestPayload Postesalescreate request) {
-		System.out.println(request.getAstrRequest().getHeader().getMessagetype());
+		System.out.println(request.toString());
 		
 		ResponseHeader header = new ResponseHeader();
 		header.setResponsecode(0);
