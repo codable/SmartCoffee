@@ -67,4 +67,17 @@ public class OrderService {
     	}
     	return null;
     }
+	
+	public boolean checkMenuFinish(List<Menu> menus) {
+		int count = 0;
+		int size = menus.size();
+		for(Menu menu: menus) {
+    		if(menu.getAmount() == 0) {
+    			count++;
+    		}
+    	}
+		if(size == count)
+			return true;
+		return false;
+	}
 }

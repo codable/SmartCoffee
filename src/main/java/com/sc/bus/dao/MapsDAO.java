@@ -20,8 +20,8 @@ public class MapsDAO {
 		return baseDB.findAll(Maps.class, Constants.MapsCollectionName);
 	}
 	
-	public void delete(Maps location) {
-		baseDB.delete(location, Constants.MapsCollectionName);
+	public void delete(Maps maps) {
+		baseDB.delete(maps, Constants.MapsCollectionName);
 	}
 	
 	public int count(Query query) {

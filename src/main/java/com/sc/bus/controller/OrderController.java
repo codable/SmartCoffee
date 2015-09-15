@@ -3,7 +3,9 @@ package com.sc.bus.controller;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -39,7 +41,7 @@ public class OrderController {
 
     
     /*
-     * Client will call it at startup.
+     * Client will call it at startup to get all orders' location
      */
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public @ResponseBody List<OrderLocation> getAllOrdersLocation() {
@@ -83,25 +85,41 @@ public class OrderController {
     
     /*
      * Update order
+     * TODO: Need test
      */
     @RequestMapping(value = "/{orderId}", method = RequestMethod.PUT, produces = "application/json;charset=UTF-8")
-    public @ResponseBody String updateOrder(@PathVariable String orderId, @RequestBody MenuWrapper wrapper) {
+    public @ResponseBody Map<String, String> updateOrder(@PathVariable String orderId, @RequestBody MenuWrapper wrapper) {
     	
-    	String result = "{\"result\": \"success\"}";
+    	Map<String, String> res = new HashMap<String, String>();
+    	res.put("code", "0");
+    	res.put("msg", "Success");
+    	
     	List<Order> orders = orderService.findByOrderId(orderId);
     	if(orders.size() <= 0) {
-    		return result;
+    		res.put("code", "1");
+        	res.put("msg", "Order is not exist");
+    		return res;
     	}
     	
     	Order order = orders.get(0);
     	List<Menu> menus = order.getMenus();
     	for(Menu menu: menus) {
     		Menu m = orderService.getMenuByMenuId(menu.getProductId(), wrapper.getMenus());
+    		if(m == null)
+    			continue;
+    		
+    		int amount = m.getAmount();
+    		if(amount < 0) {
+    			return res;
+    		}
     		menu.setAmount(m.getAmount());
     	}
     	order.setMenus(menus);
+    	if(orderService.checkMenuFinish(menus)) {
+    		order.setFinish(true);
+    	}
     	orderService.update(order);
     	
-    	return result;
+    	return res;
     }
 }
