@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class NFCController {
 
 	/*
-	 * Client will call it at startup, to get floors
+	 * Every time generate a order, waiter will scan the NFC, this API will receive NFC info and bind it with order id.
 	 */
 	@RequestMapping(value = "/tag", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
 	public @ResponseBody String getFloors() {

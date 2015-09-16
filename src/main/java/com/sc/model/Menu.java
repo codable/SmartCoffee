@@ -9,7 +9,7 @@ public class Menu {
 	public Menu() {}
 
 	public Menu(String productId, String name, Double price,
-			Integer amount, Boolean finish) {
+			Integer amount) {
 		this.productId = productId;
 		this.name = name;
 		this.price = price;

@@ -5,24 +5,24 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.sc.bus.dao.MapsDAO;
+import com.sc.bus.dao.MapDAO;
 import com.sc.model.Maps;
 
 @Service
-public class MapsService {
+public class MapService {
 
 	@Autowired
-	MapsDAO mapsDAO;
+	MapDAO mapDAO;
 	
 	public List<Maps> findAll() {
-		return mapsDAO.findAll();
+		return mapDAO.findAll();
 	}
 	
-	public void add(Maps maps) {
-		mapsDAO.save(maps);
+	public void add(Maps map) {
+		mapDAO.save(map);
 	}
 	
-	public void delete(Maps maps) {
-		mapsDAO.delete(maps);
+	public void delete(Maps map) {
+		mapDAO.delete(map);
 	}
 }

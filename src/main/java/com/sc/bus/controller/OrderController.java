@@ -10,6 +10,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,22 +21,28 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sc.bus.service.LocationService;
+import com.sc.bus.service.MemoryService;
 import com.sc.bus.service.OrderService;
 import com.sc.model.Location;
 import com.sc.model.Menu;
 import com.sc.model.MenuWrapper;
 import com.sc.model.Order;
 import com.sc.model.OrderLocation;
+import com.sc.util.Constants.OrderUpdateStatus;
 
 
 @Controller
 @RequestMapping(value = "/order")
 public class OrderController {
 
+	private static final Logger logger = LoggerFactory.getLogger(OrderController.class);
+	
     @Autowired
     private OrderService orderService;
     @Autowired
     private LocationService locationService;
+    @Autowired
+    private MemoryService memoryService;
     
     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     String lastModified = formatter.format(new Date());
@@ -42,29 +50,35 @@ public class OrderController {
     
     /*
      * Client will call it at startup to get all orders' location
+     * Different Card Id could map to the same location ID, Client should warn waiter to the Card.
      */
     @RequestMapping(value = "/all", method = RequestMethod.GET)
     public @ResponseBody List<OrderLocation> getAllOrdersLocation() {
     	
     	List<OrderLocation> locationOrderList = new ArrayList<OrderLocation>();
     	List<Location> locations = locationService.findAll();
-    	List<Order> orders = orderService.findAll();
+    	// TODO: should change to find not finish and today's orders.
+    	List<Order> orders = orderService.findAll();	
     	
     	for(Location location: locations) {
     		String cardId = location.getCardId();
-    		Order order = orderService.getOrderByCardId(cardId, orders);
-    		if(order == null)
+    		List<Order> orderList = orderService.getOrderByCardId(cardId, orders);
+    		if(orderList.size() <= 0)
     			continue;
-			
-    		OrderLocation locationOrder = new OrderLocation(order, location);
-    		locationOrderList.add(locationOrder);
+    		if(orderList.size() > 1) {
+    			//Still add to list, client should warn waiter to check this abnormal status.
+    			logger.warn("Abnormal status, Not finish and today's order count should be only one!");
+    		}
+    		for(Order order: orderList) {
+				OrderLocation orderLocation = new OrderLocation(order, location, OrderUpdateStatus.NOTUSED);
+	    		locationOrderList.add(orderLocation);
+			}
     	}
     	return locationOrderList;
     }
     
     /*
      * Client will call it every x seconds, just return modified data.
-     * TODO: should add a memory collection to store lately changes.
      */
     @RequestMapping(value = "/newly", method = RequestMethod.GET)
     public @ResponseBody List<OrderLocation> getNewlyOrdersLocation(
@@ -79,13 +93,13 @@ public class OrderController {
         	return null;
     	}
     	
-    	List<OrderLocation> locations = new ArrayList<OrderLocation>();
-    	return locations;
+    	List<OrderLocation> orderLocations = new ArrayList<OrderLocation>(memoryService.getNewlyUpdatedLocations());
+    	memoryService.clearUpdatedLocations();
+    	return orderLocations;
     }
     
     /*
      * Update order
-     * TODO: Need test
      */
     @RequestMapping(value = "/{orderId}", method = RequestMethod.PUT, produces = "application/json;charset=UTF-8")
     public @ResponseBody Map<String, String> updateOrder(@PathVariable String orderId, @RequestBody MenuWrapper wrapper) {
@@ -97,25 +111,34 @@ public class OrderController {
     	List<Order> orders = orderService.findByOrderId(orderId);
     	if(orders.size() <= 0) {
     		res.put("code", "1");
-        	res.put("msg", "Order is not exist");
+        	res.put("msg", "Order is not exist!");
     		return res;
     	}
     	
     	Order order = orders.get(0);
-    	List<Menu> menus = order.getMenus();
-    	for(Menu menu: menus) {
-    		Menu m = orderService.getMenuByMenuId(menu.getProductId(), wrapper.getMenus());
-    		if(m == null)
+    	List<Menu> existMenuList = order.getMenus();
+    	for(Menu existMenu: existMenuList) {
+    		// if exist menu not in requested update menus, continue 
+    		List<Menu> updateMenuList = orderService.getMenuByMenuId(existMenu.getProductId(), wrapper.getMenus());
+    		if(updateMenuList.size() <= 0)
     			continue;
+    		if(updateMenuList.size() > 1) {
+    			res.put("code", "2");
+            	res.put("msg", "Abnormal status, One updated order should not exist multi same product ID!");
+    		}
     		
-    		int amount = m.getAmount();
+    		int amount = updateMenuList.get(0).getAmount();
     		if(amount < 0) {
+    			res.put("code", "3");
+            	res.put("msg", "Update amount is not correct, should not less than 0!");
     			return res;
     		}
-    		menu.setAmount(m.getAmount());
+    		// update exist menu's amount
+    		existMenu.setAmount(amount);
     	}
-    	order.setMenus(menus);
-    	if(orderService.checkMenuFinish(menus)) {
+    	order.setMenus(existMenuList);
+    	// if all exist menus' amount are 0, then mark it as finish
+    	if(orderService.checkMenuFinish(existMenuList)) {
     		order.setFinish(true);
     	}
     	orderService.update(order);

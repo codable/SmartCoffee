@@ -1,7 +1,9 @@
 package com.sc.bus.controller;
 
 import java.io.InputStream;
+import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
@@ -14,13 +16,28 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import com.sc.bus.service.MapService;
+import com.sc.model.Maps;
+
 
 @Controller
 @RequestMapping(value = "/map")
 public class MapController {
-    
+	
+	@Autowired
+    private MapService mapService;
+	
 	@Value("${floor}")
 	private String floor;
+	
+	/*
+     * Client will call it to get all location maps.
+     */
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public @ResponseBody List<Maps> getAllLocationMap() {
+    	return mapService.findAll();
+    }
+    
     /*
      * Client will call it at startup, to get each floor's picture
      */

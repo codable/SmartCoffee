@@ -1,5 +1,6 @@
 package com.sc.bus.service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,22 +51,24 @@ public class OrderService {
 		return orderDAO.find(query);
 	}
 	
-	public Order getOrderByCardId(String cardId, List<Order> orders) {
+	public List<Order> getOrderByCardId(String cardId, List<Order> orders) {
+		List<Order> orderList = new ArrayList<Order>();
     	for(Order order: orders) {
     		if(order.getCardId().equals(cardId)) {
-    			return order;
+    			orderList.add(order);
     		}
     	}
-    	return null;
+    	return orderList;
     }
 	
-	public Menu getMenuByMenuId(String menuId, List<Menu> menus) {
+	public List<Menu> getMenuByMenuId(String menuId, List<Menu> menus) {
+		List<Menu> menuList = new ArrayList<Menu>();
     	for(Menu menu: menus) {
     		if(menu.getProductId().equals(menuId)) {
-    			return menu;
+    			menuList.add(menu);
     		}
     	}
-    	return null;
+    	return menuList;
     }
 	
 	public boolean checkMenuFinish(List<Menu> menus) {

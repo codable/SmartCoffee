@@ -28,6 +28,11 @@ public class LocationService {
 		locationDAO.delete(location);
 	}
 	
+	public void update(Location location) {
+		locationDAO.delete(location);
+		locationDAO.save(location);
+	}
+	
 	public List<Location> findByCardId(String cardId) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("cardId").is(cardId));

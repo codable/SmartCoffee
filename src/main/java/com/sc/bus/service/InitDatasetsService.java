@@ -40,13 +40,13 @@ public class InitDatasetsService {
 		List<Menu> list3 = new ArrayList<Menu>();
 		List<Menu> list4 = new ArrayList<Menu>();
 		
-		Menu menu1 = new Menu("11", "香草拿铁", 22.0, 1, false);
-		Menu menu2 = new Menu("12", "美式咖啡", 18.0, 1, false);
-		Menu menu3 = new Menu("13", "卡布奇诺", 12.0, 1, false);
-		Menu menu4 = new Menu("14", "浓缩咖啡", 20.0, 1, false);
-		Menu menu5 = new Menu("15", "伯爵红茶", 50.0, 1, false);
-		Menu menu6 = new Menu("16", "草莓绿茶", 40.0, 1, false);
-		Menu menu7 = new Menu("17", "恋恋抹茶", 36.0, 1, false);
+		Menu menu1 = new Menu("11", "香草拿铁", 22.0, 1);
+		Menu menu2 = new Menu("12", "美式咖啡", 18.0, 1);
+		Menu menu3 = new Menu("13", "卡布奇诺", 12.0, 1);
+		Menu menu4 = new Menu("14", "浓缩咖啡", 20.0, 1);
+		Menu menu5 = new Menu("15", "伯爵红茶", 50.0, 1);
+		Menu menu6 = new Menu("16", "草莓绿茶", 40.0, 1);
+		Menu menu7 = new Menu("17", "恋恋抹茶", 36.0, 1);
 		list1.add(menu1);
 		list1.add(menu2);
 		

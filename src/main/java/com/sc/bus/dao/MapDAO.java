@@ -11,7 +11,7 @@ import com.sc.model.Maps;
 import com.sc.util.Constants;
 
 @Repository
-public class MapsDAO {
+public class MapDAO {
 	
 	@Autowired
 	IBaseDB baseDB;
