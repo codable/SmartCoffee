@@ -36,6 +36,11 @@ public class CoffeeEndpoint {
 	
 	private static final String NAMESPACE_URI = "http://tempurl.org";
  
+	/*
+	 * 1, CardId, it's better transport from this API, or mapping to the recent NFC info, require waiter operate successfully.
+	 * 2, Name, it's better transport from this API, or download menu list to store in our DB
+	 * 
+	 */
 	@PayloadRoot(namespace = NAMESPACE_URI, localPart = "postesalescreate")
 	@ResponsePayload
 	public PostesalescreateResponse getPostSales(@RequestPayload Postesalescreate request) {
@@ -68,7 +73,7 @@ public class CoffeeEndpoint {
 		List<Menu> menus = new ArrayList<Menu>();
 		for(Esalesitem eSalesItem: eSalesItems) {
 			String productId = eSalesItem.getItemcode();
-			// TODO: how to get?
+			// TODO: how to get? 
 			String name = "";
 			Double price = eSalesItem.getNetamount().doubleValue();
 			Integer amount = eSalesItem.getQty().intValue();

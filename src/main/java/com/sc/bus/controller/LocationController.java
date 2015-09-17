@@ -14,9 +14,12 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sc.bus.service.LocationService;
 import com.sc.bus.service.MemoryService;
+import com.sc.bus.service.OrderService;
 import com.sc.model.Location;
 import com.sc.model.LocationWrapper;
+import com.sc.model.Order;
 import com.sc.util.Constants;
+import com.sc.util.Constants.OrderUpdateStatus;
 
 
 @Controller
@@ -28,6 +31,8 @@ public class LocationController {
     @Autowired
     private LocationService locationService;
     @Autowired
+    private OrderService orderService;
+    @Autowired
     private MemoryService memoryService;
     
     /*
@@ -38,26 +43,36 @@ public class LocationController {
     public  void receiveLocaltions(@RequestBody LocationWrapper wrapper) {
 		for (Location location : wrapper.getLocations()) {
 			logger.info(location.toString());
-			List<Location> existLocations = locationService.findByCardId(location.getCardId());
-			
 			String locationId = location.getLocationId();
+			String cardId = location.getCardId();
+			List<Location> existLocations = locationService.findByCardId(cardId);
+			
 			int size = existLocations.size();
 			if(size <= 0) {
 				if(!locationId.equals(Constants.LocationDeleteFLag)) {	//add
 					locationService.add(location);
-					memoryService.addLocation(location);
+					memoryService.updateLocation(location, OrderUpdateStatus.UPDATE);
 				}
 			}
 			else if(size == 1) {
-				// TODO: should order be marked as finish here?
 				Location existLocation = existLocations.get(0);
 				if(locationId.equals(Constants.LocationDeleteFLag)) {	//delete
+					List<Order> orders = orderService.findByCardId(cardId);
+					// If location deleted, could be think as order has delivered.
+					if(orders.size() > 0) {
+						for(Order order: orders) {
+							order.setFinish(true);
+							orderService.update(order);
+						}
+					}
+					
 					locationService.delete(existLocation);
-					memoryService.deleteLocation(location);
+					memoryService.updateLocation(existLocation, OrderUpdateStatus.DELETE);
 				}
 				else {													//update
+					// Change seat or in the middle of the take away
 					locationService.update(existLocation);
-					memoryService.updateLocation(location);
+					memoryService.updateLocation(existLocation, OrderUpdateStatus.UPDATE);
 				}
 			}
 			else {

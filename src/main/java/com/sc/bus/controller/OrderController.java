@@ -47,13 +47,14 @@ public class OrderController {
     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
     String lastModified = formatter.format(new Date());
 
-    
     /*
      * Client will call it at startup to get all orders' location
      * Different Card Id could map to the same location ID, Client should warn waiter to the Card.
      */
     @RequestMapping(value = "/all", method = RequestMethod.GET)
-    public @ResponseBody List<OrderLocation> getAllOrdersLocation() {
+    public @ResponseBody List<OrderLocation> getAllOrdersLocation(final HttpServletResponse response) {
+    	
+    	response.setHeader("Last-Modified", lastModified);
     	
     	List<OrderLocation> locationOrderList = new ArrayList<OrderLocation>();
     	List<Location> locations = locationService.findAll();
@@ -84,7 +85,11 @@ public class OrderController {
     public @ResponseBody List<OrderLocation> getNewlyOrdersLocation(
     		final HttpServletRequest request, 
     		final HttpServletResponse response) {
-    	response.setHeader("Last-Modified", lastModified);
+    	
+    	List<OrderLocation> newlyOrderLocations = memoryService.getNewlyUpdatedLocations();
+    	if(newlyOrderLocations.size() > 0) {
+    		lastModified = formatter.format(new Date());
+    	}
     	
     	String ifModifiedSince = request.getHeader("If-Modified-Since");
     	if(ifModifiedSince != null && ifModifiedSince.equals(lastModified)) {
@@ -93,13 +98,16 @@ public class OrderController {
         	return null;
     	}
     	
-    	List<OrderLocation> orderLocations = new ArrayList<OrderLocation>(memoryService.getNewlyUpdatedLocations());
+    	response.setHeader("Last-Modified", lastModified);
+    	
+    	List<OrderLocation> orderLocations = new ArrayList<OrderLocation>(newlyOrderLocations);
     	memoryService.clearUpdatedLocations();
     	return orderLocations;
     }
     
     /*
      * Update order
+     * Precondition, order status is not finished
      */
     @RequestMapping(value = "/{orderId}", method = RequestMethod.PUT, produces = "application/json;charset=UTF-8")
     public @ResponseBody Map<String, String> updateOrder(@PathVariable String orderId, @RequestBody MenuWrapper wrapper) {
@@ -114,6 +122,12 @@ public class OrderController {
         	res.put("msg", "Order is not exist!");
     		return res;
     	}
+    	if(orders.size() > 1) {
+    		logger.error("Must be ensure unique order ID");
+    		res.put("code", "2");
+        	res.put("msg", "Multi order ID!");
+        	return res;
+    	}
     	
     	Order order = orders.get(0);
     	List<Menu> existMenuList = order.getMenus();
@@ -123,13 +137,14 @@ public class OrderController {
     		if(updateMenuList.size() <= 0)
     			continue;
     		if(updateMenuList.size() > 1) {
-    			res.put("code", "2");
+    			res.put("code", "3");
             	res.put("msg", "Abnormal status, One updated order should not exist multi same product ID!");
+            	return res;
     		}
     		
     		int amount = updateMenuList.get(0).getAmount();
     		if(amount < 0) {
-    			res.put("code", "3");
+    			res.put("code", "4");
             	res.put("msg", "Update amount is not correct, should not less than 0!");
     			return res;
     		}

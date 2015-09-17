@@ -1,0 +1,291 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Smart Coffee",
+        "description": "API definition for Smart Coffee",
+        "contact": {
+            "name": "API Support",
+            "url": "http://test.com",
+            "email": "test@test.com"
+        },
+        "license": {
+            "name": "Apache 2.0",
+            "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+        }
+    },
+    "basePath": "/api",
+    "schemes": [
+        "http"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "paths": {
+        "/order/all": {
+            "get": {
+                "description": "Returns all order's location",
+                "operationId": "getAllOrdersLocation",
+                "responses": {
+                    "200": {
+                        "description": "An array of orders",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/OrderLocation"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/order/newly": {
+            "get": {
+                "description": "Returns newly orders' location",
+                "operationId": "getNewlyOrdersLocation",
+                "responses": {
+                    "200": {
+                        "description": "An array of orders",
+                        "headers": {
+                            "Last-Modified": {
+                                "type": "string",
+                                "format": "date-time"
+                            }
+                        },
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/OrderLocation"
+                            }
+                        }
+                    },
+                    "304": {
+                        "description": "Not modified"
+                    }
+                }
+            }
+        },
+        "/map": {
+            "get": {
+                "description": "Returns all localtions' map",
+                "operationId": "getAllLocationMap",
+                "responses": {
+                    "200": {
+                        "description": "An array of locations' map",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/Maps"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/order/{orderId}": {
+            "put": {
+                "description": "Update order",
+                "operationId": "updateOrder",
+                "parameters": [
+                    {
+                        "name": "orderId",
+                        "in": "path",
+                        "description": "Order ID.",
+                        "required": true,
+                        "type": "string"
+                    },
+                    {
+                        "name": "menu",
+                        "in": "body",
+                        "description": "order's menu to be update",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/Menu"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Success(0) or OrderNotExist(1) MultiOrderID(2) MultiMenuID(3) IllegalAmount(4)",
+                        "schema": {
+                            "type": "string"
+                        },
+                        "examples": {
+                            "application/json": {
+                                "code": 0,
+                                "msg": "success"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "/map/floors": {
+            "get": {
+                "description": "Returns floors",
+                "operationId": "getFloors",
+                "responses": {
+                    "200": {
+                        "description": "Return floors",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        },
+        "/map/picture/{floorId}": {
+            "get": {
+                "description": "Returns map picture",
+                "operationId": "getMapPicture",
+                "consumes": [
+                    "image/jpg"
+                ],
+                "parameters": [
+                    {
+                        "name": "floorId",
+                        "in": "path",
+                        "description": "The floor ID.",
+                        "required": true,
+                        "type": "integer",
+                        "format": "int32"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Return image stream",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "OrderLocation": {
+            "properties": {
+                "order": {
+                    "$ref": "#/definitions/Order"
+                },
+                "location": {
+                    "$ref": "#/definitions/Location"
+                },
+                "status": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Used for get latest order info, 0 not userd, 1 add, 2 delete, 3 update"
+                }
+            }
+        },
+        "Order": {
+            "properties": {
+                "orderId": {
+                    "type": "string",
+                    "description": "Order ID."
+                },
+                "cardId": {
+                    "type": "string",
+                    "description": "Card ID."
+                },
+                "orderDate": {
+                    "type": "string",
+                    "format": "date",
+                    "description": "The date of generated order."
+                },
+                "totalPrice": {
+                    "type": "number",
+                    "format": "double",
+                    "description": "Total price for the order."
+                },
+                "menu": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/Menu"
+                    }
+                },
+                "finish": {
+                    "type": "boolean",
+                    "description": "Is delivery"
+                }
+            },
+            "example": {
+                "orderId": "2015090123238909",
+                "cardId": "1",
+                "orderDate": "2015-09-01 13:40:42",
+                "totalPrice": 56.8,
+                "finish": false
+            }
+        },
+        "Location": {
+            "properties": {
+                "lcationId": {
+                    "type": "string",
+                    "description": "Location ID, that is Table ID."
+                },
+                "cardId": {
+                    "type": "string",
+                    "description": "Card ID."
+                }
+            },
+            "example": {
+                "locationId": "1",
+                "cardId": "2"
+            }
+        },
+        "Maps": {
+            "properties": {
+                "locationId": {
+                    "type": "string",
+                    "description": "Product ID."
+                },
+                "xPos": {
+                    "type": "number",
+                    "format": "double",
+                    "description": "X postion in map picture."
+                },
+                "yPos": {
+                    "type": "number",
+                    "format": "double",
+                    "description": "Y postion in map picture."
+                }
+            },
+            "example": {
+                "locationId": "1",
+                "xPos": 2.1,
+                "yPos": 3.2
+            }
+        },
+        "Menu": {
+            "properties": {
+                "productId": {
+                    "type": "string",
+                    "description": "Product ID."
+                },
+                "name": {
+                    "type": "string",
+                    "description": "Prodcut Name."
+                },
+                "amount": {
+                    "type": "integer",
+                    "format": "int32",
+                    "description": "Number of the product."
+                },
+                "price": {
+                    "type": "number",
+                    "format": "double",
+                    "description": "Price of the product."
+                }
+            },
+            "example": {
+                "productId": "1",
+                "name": "coffee",
+                "amount": 1,
+                "price": 18.8
+            }
+        }
+    }
+}

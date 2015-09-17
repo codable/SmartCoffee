@@ -32,78 +32,55 @@ public class MemoryService {
 	public void clearUpdatedLocations() {
 		newlyUpdatedLocations.clear();
 	}
-
-	public void addLocation(Location location) {
-		//This could leave to empty, for add location but without order change.
-		List<Order> orders = orderService.findByCardId(location.getCardId());
-		int size = orders.size();
-		if(size <= 0) {
-			logger.warn("No such order, this status could not be display, because first come order, then location");
-			return;
-		}
-		else if(size == 1) {
-			Order order = orders.get(0);
-			OrderLocation orderLocation = new OrderLocation(order, location, OrderUpdateStatus.UPDATE);
-			newlyUpdatedLocations.add(orderLocation);
-		}
-		else if(size > 1) {
-			// TODO: how to deal with this.
-			logger.warn("Abnormal status, Not finish and today's order count should be only one!");
-		}
-	}
 	
-	public void deleteLocation(Location location) {
+	/*
+	 * Add:    First come order, then location, so OrderUpdateStatus for add is 'UPDATE'
+	 * Delete: Waiter has take the card to bar, delete the location, could be think as order has delivered
+	 * Update: User change seat or waiter in the middle of the take card away
+	 */
+	public void updateLocation(Location location, OrderUpdateStatus status) {
 		List<Order> orders = orderService.findByCardId(location.getCardId());
 		int size = orders.size();
 		if(size <= 0) {
+			// In the add operation, if no order, it's not standard operation
 			logger.warn("No such order, nothing to update");
 			return;
 		}
 		else if(size == 1) {
 			Order order = orders.get(0);
-			OrderLocation orderLocation = new OrderLocation(order, location, OrderUpdateStatus.DELETE);
+			OrderLocation orderLocation = new OrderLocation(order, location, status);
 			newlyUpdatedLocations.add(orderLocation);
 		}
 		else if(size > 1) {
 			// TODO: how to deal with this.
 			logger.warn("Abnormal status, Not finish and today's order count should be only one!");
 		}
-		
-	}
-	
-	public void updateLocation(Location location) {
-		List<Order> orders = orderService.findByCardId(location.getCardId());
-		int size = orders.size();
-		if(size <= 0) {
-			logger.warn("No such order, nothing to update");
-			return;
-		}
-		else if(size == 1) {
-			Order order = orders.get(0);
-			OrderLocation orderLocation = new OrderLocation(order, location, OrderUpdateStatus.UPDATE);
-			newlyUpdatedLocations.add(orderLocation);
-		}
-		else if(size > 1) {
-			// TODO: how to deal with this.
-			logger.warn("Abnormal status, Not finish and today's order count should be only one!");
-		}
-		
 	}
 	
 	
+	/*
+	 * User place an order, then sit down, so first come order data, then location data
+	 */
 	public void addOrder(Order order) {
 		List<Location> locations = locationService.findByCardId(order.getCardId());
 		int size = locations.size();
 		
 		Location location = null;
 		if(size <= 0) {
-			logger.warn("User has not sit down, add to memory to dispaly first");
+			logger.info("User has not sit down, add to memory to dispaly first");
 		}
+		/*
 		else if(size == 1) {
+			logger.warn("Not a standard operation, first come order data, then location data");
 			location = locations.get(0);
 		}
 		else if(size > 1) {
 			logger.warn("Multi Card Id mapping found");
+			return;
+		}
+		*/
+		else {
+			logger.warn("Not a standard operation, first come order data, then location data");
 			return;
 		}
 		OrderLocation orderLocation = new OrderLocation(order, location, OrderUpdateStatus.ADD);
