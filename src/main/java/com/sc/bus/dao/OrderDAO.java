@@ -40,5 +40,9 @@ public class OrderDAO {
 		return baseDB.find(query, Order.class, Constants.OrderCollectionName);
 
 	}
+	
+	public void drop() {
+		baseDB.drop(Constants.OrderCollectionName);
+	}
 
 }

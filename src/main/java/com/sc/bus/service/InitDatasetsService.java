@@ -40,13 +40,12 @@ public class InitDatasetsService {
 		List<Menu> list3 = new ArrayList<Menu>();
 		List<Menu> list4 = new ArrayList<Menu>();
 		
-		Menu menu1 = new Menu("11", "香草拿铁", 22.0, 1);
-		Menu menu2 = new Menu("12", "美式咖啡", 18.0, 1);
-		Menu menu3 = new Menu("13", "卡布奇诺", 12.0, 1);
-		Menu menu4 = new Menu("14", "浓缩咖啡", 20.0, 1);
-		Menu menu5 = new Menu("15", "伯爵红茶", 50.0, 1);
-		Menu menu6 = new Menu("16", "草莓绿茶", 40.0, 1);
-		Menu menu7 = new Menu("17", "恋恋抹茶", 36.0, 1);
+		Menu menu1 = new Menu("11", "Coffee", 22.0, 1, 1);
+		Menu menu2 = new Menu("12", "America Coffee", 18.0, 1, 1);
+		Menu menu3 = new Menu("13", "Capuchino", 12.0, 1, 1);
+		Menu menu4 = new Menu("14", "Compresso", 20.0, 1, 1);
+		Menu menu5 = new Menu("15", "Red Tea", 50.0, 1, 1);
+		Menu menu6 = new Menu("16", "Green Tea", 40.0, 1, 1);
 		list1.add(menu1);
 		list1.add(menu2);
 		
@@ -55,7 +54,6 @@ public class InitDatasetsService {
 		list2.add(menu6);
 		
 		list3.add(menu4);
-		list3.add(menu7);
 		
 		list4.add(menu1);
 		list4.add(menu2);
@@ -63,7 +61,6 @@ public class InitDatasetsService {
 		list4.add(menu4);
 		list4.add(menu5);
 		list4.add(menu6);
-		list4.add(menu7);
 		
 		Order order1 = new Order("111", "1", list1, new Date().getTime(), 58.0, false);
 		Order order2 = new Order("222", "2", list2, new Date().getTime(), 632.2, false);

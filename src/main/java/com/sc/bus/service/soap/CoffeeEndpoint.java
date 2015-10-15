@@ -50,8 +50,7 @@ public class CoffeeEndpoint {
 		Esalestotal eSalesTotal = request.getAstrRequest().getEsalestotal();
 		String orderId = eSalesTotal.getTxdocno();
 		
-		// TODO: how to get? could this value be passed from extend param?
-		String cardId = "";
+		String cardId = String.valueOf(eSalesTotal.getTableno());
 		
 		String txDate = eSalesTotal.getTxdateYyyymmdd();
 		String txTime = eSalesTotal.getTxtimeHhmmss();
@@ -73,16 +72,16 @@ public class CoffeeEndpoint {
 		List<Menu> menus = new ArrayList<Menu>();
 		for(Esalesitem eSalesItem: eSalesItems) {
 			String productId = eSalesItem.getItemcode();
-			// TODO: how to get? 
-			String name = "";
+			String name = eSalesItem.getItemname();
 			Double price = eSalesItem.getNetamount().doubleValue();
 			Integer amount = eSalesItem.getQty().intValue();
 			
-			Menu menu = new Menu(productId, name, price, amount);
+			Menu menu = new Menu(productId, name, price, amount, amount);
 			menus.add(menu);
 		}
 		
 		Order order = new Order(orderId, cardId, menus, orderDate, totalPrice, finish);
+		System.out.println(order);
 		orderService.add(order);
 		memoryService.addOrder(order);
 		

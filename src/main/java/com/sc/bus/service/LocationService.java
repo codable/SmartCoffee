@@ -33,6 +33,10 @@ public class LocationService {
 		locationDAO.save(location);
 	}
 	
+	public void drop() {
+		locationDAO.drop();
+	}
+	
 	public List<Location> findByCardId(String cardId) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("cardId").is(cardId));

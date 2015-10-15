@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -110,7 +111,7 @@ public class OrderController {
      * Precondition, order status is not finished
      */
     @RequestMapping(value = "/{orderId}", method = RequestMethod.PUT, produces = "application/json;charset=UTF-8")
-    public @ResponseBody Map<String, String> updateOrder(@PathVariable String orderId, @RequestBody MenuWrapper wrapper) {
+    public @ResponseBody Map<String, String> updateOrder(@PathVariable String orderId, @RequestBody List<Menu> menus) {
     	
     	Map<String, String> res = new HashMap<String, String>();
     	res.put("code", "0");
@@ -133,7 +134,7 @@ public class OrderController {
     	List<Menu> existMenuList = order.getMenus();
     	for(Menu existMenu: existMenuList) {
     		// if exist menu not in requested update menus, continue 
-    		List<Menu> updateMenuList = orderService.getMenuByMenuId(existMenu.getProductId(), wrapper.getMenus());
+    		List<Menu> updateMenuList = orderService.getMenuByMenuId(existMenu.getProductId(), menus);
     		if(updateMenuList.size() <= 0)
     			continue;
     		if(updateMenuList.size() > 1) {
@@ -149,7 +150,7 @@ public class OrderController {
     			return res;
     		}
     		// update exist menu's amount
-    		existMenu.setAmount(amount);
+    		existMenu.setCurrentAmount(amount);
     	}
     	order.setMenus(existMenuList);
     	// if all exist menus' amount are 0, then mark it as finish
@@ -159,5 +160,39 @@ public class OrderController {
     	orderService.update(order);
     	
     	return res;
+    }
+	
+    /*
+     * Used for test
+     */
+    @RequestMapping(value = "/{id}", method = RequestMethod.POST)
+    public @ResponseBody void addOrder(@PathVariable String id) {
+    	List<Menu> list = new ArrayList<Menu>();
+		
+		Menu menu1 = new Menu("11", "Coffee", 22.0, 1, 1);
+		Menu menu2 = new Menu("12", "America Coffee", 18.0, 1, 1);
+		Menu menu3 = new Menu("13", "Capuchino", 12.0, 1, 1);
+		Menu menu4 = new Menu("14", "Compresso", 20.0, 1, 1);
+		Menu menu5 = new Menu("15", "Red Tea", 50.0, 1, 1);
+		Menu menu6 = new Menu("16", "Green Tea", 40.0, 1, 1);
+		list.add(menu1);
+		list.add(menu2);
+		list.add(menu3);
+		list.add(menu4);
+		list.add(menu5);
+		list.add(menu6);
+		
+		Order order = new Order(UUID.randomUUID().toString(), id, list, new Date().getTime(), 58.0, false);
+		orderService.add(order);
+    	Location location = new Location(id, id);
+		locationService.add(location);
+    }
+    
+    /*
+     * Used for test
+     */
+    @RequestMapping(value = "", method = RequestMethod.DELETE)
+    public @ResponseBody void deleteOrder() {
+    	orderService.drop();
     }
 }

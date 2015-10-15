@@ -40,5 +40,9 @@ public class LocationDAO {
 		return baseDB.find(query, Location.class, Constants.LocationCollectionName);
 
 	}
+	
+	public void drop() {
+		baseDB.drop(Constants.LocationCollectionName);
+	}
 
 }

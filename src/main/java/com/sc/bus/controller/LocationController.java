@@ -1,12 +1,19 @@
 package com.sc.bus.controller;
 
 
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+import java.net.Socket;
+import java.net.UnknownHostException;
 import java.util.List;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -34,6 +41,9 @@ public class LocationController {
     private OrderService orderService;
     @Autowired
     private MemoryService memoryService;
+    
+    @Value("${locationReceiver.port}")
+	private String port;
     
     /*
      * Gateway will push data to backend(me).
@@ -82,4 +92,18 @@ public class LocationController {
 		}
 	}
     
+    /*
+     * Used for test
+     */
+	@RequestMapping(value = "/{data}", method = RequestMethod.POST)
+	public @ResponseBody void sendSocketToAddLocation(@PathVariable String data)
+			throws UnknownHostException, IOException {
+		String host = "127.0.0.1";
+		Socket client = new Socket(host, Integer.valueOf(port));
+		Writer writer = new OutputStreamWriter(client.getOutputStream());
+		writer.write(data);
+		writer.flush();
+		writer.close();
+		client.close();
+	}
 }

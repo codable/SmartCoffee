@@ -62,6 +62,7 @@
             <xs:element name="netamount" type="xs:decimal"/>
             <xs:element name="bonusearn" type="xs:decimal"/>
             <xs:element name="extendparam" type="xs:string"/>
+            <xs:element name="tableno" type="xs:long"/>
         </xs:sequence>
     </xs:complexType>
     
@@ -81,6 +82,7 @@
             <xs:element name="netamount" type="xs:decimal"/>
             <xs:element name="extendparam" type="xs:string"/>
             <xs:element name="salesitemremark" type="xs:string"/>
+            <xs:element name="itemname" type="xs:string"/>
         </xs:sequence>
     </xs:complexType>
     

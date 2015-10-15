@@ -5,15 +5,18 @@ public class Menu {
 	private String name;
 	private Double price;
 	private Integer amount;
+	private Integer currentAmount;
 	
 	public Menu() {}
 
-	public Menu(String productId, String name, Double price,
-			Integer amount) {
+	public Menu(String productId, String name, Double price, Integer amount,
+			Integer currentAmount) {
+		super();
 		this.productId = productId;
 		this.name = name;
 		this.price = price;
 		this.amount = amount;
+		this.currentAmount = currentAmount;
 	}
 
 	public String getProductId() {
@@ -48,10 +51,19 @@ public class Menu {
 		this.amount = amount;
 	}
 
+	public Integer getCurrentAmount() {
+		return currentAmount;
+	}
+
+	public void setCurrentAmount(Integer currentAmount) {
+		this.currentAmount = currentAmount;
+	}
+
 	@Override
 	public String toString() {
-		return "Menu [productId=" + productId + ", name=" + name
-				+ ", price=" + price + ", amount=" + amount + "]";
+		return "Menu [productId=" + productId + ", name=" + name + ", price="
+				+ price + ", amount=" + amount + ", currentAmount="
+				+ currentAmount + "]";
 	}
 
 	

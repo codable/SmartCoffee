@@ -8,16 +8,16 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class Location {
 	@Id
 	private String id;
-	private String locationId;
+	private String locationId;	//that is table id
 	@Indexed(unique = true)
 	private String cardId;
 
 	public Location() {}
 	
-	public Location(String locationId, String customerId) {
+	public Location(String locationId, String cardId) {
 		super();
 		this.locationId = locationId;
-		this.cardId = customerId;
+		this.cardId = cardId;
 	}
 	
 	public String getId() {

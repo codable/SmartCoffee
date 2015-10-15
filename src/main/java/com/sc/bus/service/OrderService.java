@@ -39,6 +39,10 @@ public class OrderService {
 		orderDAO.save(order);
 	}
 	
+	public void drop() {
+		orderDAO.drop();
+	}
+	
 	public List<Order> findByOrderId(String orderId) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("orderId").is(orderId));
