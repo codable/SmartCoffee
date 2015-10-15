@@ -79,7 +79,7 @@ public class OrderService {
 		int count = 0;
 		int size = menus.size();
 		for(Menu menu: menus) {
-    		if(menu.getAmount() == 0) {
+    		if(menu.getCurrentAmount() == 0) {
     			count++;
     		}
     	}

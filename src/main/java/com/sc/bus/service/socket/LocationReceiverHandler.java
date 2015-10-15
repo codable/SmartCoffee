@@ -74,6 +74,7 @@ public class LocationReceiverHandler extends SimpleChannelUpstreamHandler {
 		int tableBegin = 16;
 		int tableEnd = 20;
 		String cardId = message.substring(cardBegin, cardEnd);
+		cardId = Integer.valueOf(cardId).toString();
 		String tableId = message.substring(tableBegin, tableEnd);
 		return new Location(tableId, cardId);
 	}

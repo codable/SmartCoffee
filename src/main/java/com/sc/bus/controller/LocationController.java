@@ -96,14 +96,30 @@ public class LocationController {
      * Used for test
      */
 	@RequestMapping(value = "/{data}", method = RequestMethod.POST)
-	public @ResponseBody void sendSocketToAddLocation(@PathVariable String data)
-			throws UnknownHostException, IOException {
-		String host = "127.0.0.1";
-		Socket client = new Socket(host, Integer.valueOf(port));
-		Writer writer = new OutputStreamWriter(client.getOutputStream());
-		writer.write(data);
-		writer.flush();
-		writer.close();
-		client.close();
+	public @ResponseBody void sendSocketToAddLocation(@PathVariable String data) {
+		
+			try {
+				String host = "127.0.0.1";
+				Socket client = new Socket(host, Integer.valueOf(port));
+				Writer writer = new OutputStreamWriter(client.getOutputStream());
+				writer.write(data);
+				writer.flush();
+				writer.close();
+				client.close();
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			} catch (UnknownHostException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 	}
+	
+	/*
+     * Used for test
+     */
+    @RequestMapping(value = "", method = RequestMethod.DELETE)
+    public @ResponseBody void deleteLocation() {
+    	locationService.drop();
+    }
 }

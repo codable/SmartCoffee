@@ -142,20 +142,25 @@ public class OrderController {
             	res.put("msg", "Abnormal status, One updated order should not exist multi same product ID!");
             	return res;
     		}
-    		
+    		int currentAmount = updateMenuList.get(0).getCurrentAmount();
     		int amount = updateMenuList.get(0).getAmount();
-    		if(amount < 0) {
+    		if(currentAmount < 0 || currentAmount > amount) {
     			res.put("code", "4");
-            	res.put("msg", "Update amount is not correct, should not less than 0!");
+            	res.put("msg", "Update amount is not correct, should not less than 0 or greater than " + amount);
     			return res;
     		}
     		// update exist menu's amount
-    		existMenu.setCurrentAmount(amount);
+    		existMenu.setCurrentAmount(currentAmount);
+    		logger.info(existMenu.toString());
     	}
+    	logger.info(existMenuList.toString());
     	order.setMenus(existMenuList);
     	// if all exist menus' amount are 0, then mark it as finish
     	if(orderService.checkMenuFinish(existMenuList)) {
     		order.setFinish(true);
+    	}
+    	else {
+    		order.setFinish(false);
     	}
     	orderService.update(order);
     	
@@ -165,24 +170,14 @@ public class OrderController {
     /*
      * Used for test
      */
-    @RequestMapping(value = "/{id}", method = RequestMethod.POST)
-    public @ResponseBody void addOrder(@PathVariable String id) {
+    @RequestMapping(value = "/{id}/{isFinish}", method = RequestMethod.POST)
+    public @ResponseBody void addOrder(@PathVariable String id, @PathVariable Boolean isFinish) {
     	List<Menu> list = new ArrayList<Menu>();
 		
 		Menu menu1 = new Menu("11", "Coffee", 22.0, 1, 1);
-		Menu menu2 = new Menu("12", "America Coffee", 18.0, 1, 1);
-		Menu menu3 = new Menu("13", "Capuchino", 12.0, 1, 1);
-		Menu menu4 = new Menu("14", "Compresso", 20.0, 1, 1);
-		Menu menu5 = new Menu("15", "Red Tea", 50.0, 1, 1);
-		Menu menu6 = new Menu("16", "Green Tea", 40.0, 1, 1);
 		list.add(menu1);
-		list.add(menu2);
-		list.add(menu3);
-		list.add(menu4);
-		list.add(menu5);
-		list.add(menu6);
 		
-		Order order = new Order(UUID.randomUUID().toString(), id, list, new Date().getTime(), 58.0, false);
+		Order order = new Order(UUID.randomUUID().toString(), id, list, new Date().getTime(), 58.0, isFinish);
 		orderService.add(order);
     	Location location = new Location(id, id);
 		locationService.add(location);
