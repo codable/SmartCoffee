@@ -20,15 +20,14 @@ import org.tempurl.PostesalescreateResult;
 import org.tempurl.ResponseHeader;
 
 import com.sc.bus.service.MemoryService;
-import com.sc.bus.service.OrderService;
 import com.sc.model.Menu;
 import com.sc.model.Order;
 
 @Endpoint
 public class CoffeeEndpoint {
 	
-	@Autowired
-    private OrderService orderService;
+	//@Autowired
+    //private OrderService orderService;
 	@Autowired
     private MemoryService memoryService;
 	
@@ -46,11 +45,21 @@ public class CoffeeEndpoint {
 	public PostesalescreateResponse getPostSales(@RequestPayload Postesalescreate request) {
 		System.out.println(request.toString());
 		
+		int retCode = 0;
+		String retMessage = "Success";
+		
 		// 1) Get total sales info
 		Esalestotal eSalesTotal = request.getAstrRequest().getEsalestotal();
 		String orderId = eSalesTotal.getTxdocno();
 		
+		// ToDo: add check here.
 		String cardId = String.valueOf(eSalesTotal.getTableno());
+		if(cardId.equals("")) {
+			//add this order or not?
+			retCode = -1;
+			retMessage = "Order ID is empty";
+			return getResponse(retCode, retMessage);
+		}
 		
 		String txDate = eSalesTotal.getTxdateYyyymmdd();
 		String txTime = eSalesTotal.getTxtimeHhmmss();
@@ -82,13 +91,17 @@ public class CoffeeEndpoint {
 		
 		Order order = new Order(orderId, cardId, menus, orderDate, totalPrice, finish);
 		System.out.println(order);
-		orderService.add(order);
+		//orderService.add(order);
 		memoryService.addOrder(order);
 		
 		// 3) Send response
+		return getResponse(retCode, retMessage);
+	}
+	
+	private PostesalescreateResponse getResponse(int retCode, String retMessage) {
 		ResponseHeader header = new ResponseHeader();
-		header.setResponsecode(0);
-		header.setResponsemessage("Success");
+		header.setResponsecode(retCode);
+		header.setResponsemessage(retMessage);
 		header.setVersion("1.0");
 		
 		PostesalescreateResult post = new PostesalescreateResult();
@@ -96,7 +109,7 @@ public class CoffeeEndpoint {
 		
 		PostesalescreateResponse response = new PostesalescreateResponse();
 		response.setPostesalescreateResult(post);
-
+		
 		return response;
 	}
 }

@@ -1,6 +1,11 @@
 package com.sc.bus.service;
 
+import hirondelle.date4j.DateTime;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +18,7 @@ import org.springframework.stereotype.Service;
 import com.sc.bus.dao.OrderDAO;
 import com.sc.model.Menu;
 import com.sc.model.Order;
+import com.sc.util.DateUtil;
 
 @Service
 public class OrderService {
@@ -87,4 +93,36 @@ public class OrderService {
 			return true;
 		return false;
 	}
+
+	private DateFormat df = new SimpleDateFormat("yyyy-MM-dd");  
+	public List<Order> findByFinishAndDate(Boolean isFinish, Date date) {
+		Query query = new Query();
+		
+        String dateStr = df.format(date); 
+		long beginDateSecs = DateUtil.getMilliseconds(dateStr);
+		DateTime theDate = DateUtil.getDaysAfter(beginDateSecs, 1);
+		long endDateSecs = DateUtil.getMilliseconds(theDate);
+		
+		query.addCriteria(Criteria.where("finish").is(isFinish));
+		query.addCriteria(Criteria.where("date").gte(beginDateSecs));
+		query.addCriteria(Criteria.where("date").lte(endDateSecs));
+		return orderDAO.find(query);
+	}
+	
+	public List<Order> findByCardIdAndFinishAndDate(String cardId, Boolean isFinish, Date date) {
+		Query query = new Query();
+		
+        String dateStr = df.format(date); 
+		long beginDateSecs = DateUtil.getMilliseconds(dateStr);
+		DateTime theDate = DateUtil.getDaysAfter(beginDateSecs, 1);
+		long endDateSecs = DateUtil.getMilliseconds(theDate);
+		
+		query.addCriteria(Criteria.where("cardId").is(cardId));
+		query.addCriteria(Criteria.where("finish").is(isFinish));
+		query.addCriteria(Criteria.where("date").gte(beginDateSecs));
+		query.addCriteria(Criteria.where("date").lte(endDateSecs));
+		return orderDAO.find(query);
+	}
+	
+	
 }

@@ -159,7 +159,13 @@
 			<artifactId>netty</artifactId>
 			<version>3.10.4.Final</version>
 		</dependency>
-        
+        <dependency>
+             <groupId>date4j</groupId>
+			 <artifactId>date4j</artifactId>
+			 <version>1.0</version>
+			 <scope>system</scope>
+			 <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/date4j.jar</systemPath>
+         </dependency>
             
   </dependencies>
   

@@ -9,6 +9,7 @@ import java.util.Random;
 
 import com.sc.db.MongoDB;
 import com.sc.model.Location;
+import com.sc.model.Maps;
 import com.sc.model.Menu;
 import com.sc.model.Order;
 import com.sc.util.Constants;
@@ -72,6 +73,11 @@ public class InitDatasetsService {
 		mongodb.save(order4, Constants.OrderCollectionName);
 	}
 	
+	private void saveMap() {
+		Maps m = new Maps("1", 1.2, 2.4);
+		mongodb.save(m, Constants.MapsCollectionName);
+	}
+	
 	public static void main(String[] args) throws Exception  {
 		String confFile = Constants.DefaultConfigFile;
 		Properties props = new Properties();
@@ -79,7 +85,8 @@ public class InitDatasetsService {
 		MongoDB mongodb = new MongoDB(props);
 		
 		InitDatasetsService mk = new InitDatasetsService(mongodb);
-		mk.saveLocation();
-		mk.saveOrder();
+		//mk.saveLocation();
+		//mk.saveOrder();
+		mk.saveMap();
 	}
 }

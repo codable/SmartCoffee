@@ -60,7 +60,8 @@ public class OrderController {
     	List<OrderLocation> locationOrderList = new ArrayList<OrderLocation>();
     	List<Location> locations = locationService.findAll();
     	// TODO: should change to find not finish and today's orders.
-    	List<Order> orders = orderService.findAll();	
+    	//List<Order> orders = orderService.findByFinishAndDate(false, new Date());
+    	List<Order> orders = orderService.findAll();
     	
     	for(Location location: locations) {
     		String cardId = location.getCardId();

@@ -1,6 +1,7 @@
 package com.sc.bus.service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -11,6 +12,7 @@ import org.springframework.stereotype.Service;
 import com.sc.model.Location;
 import com.sc.model.Order;
 import com.sc.model.OrderLocation;
+import com.sc.util.Constants;
 import com.sc.util.Constants.OrderUpdateStatus;
 
 @Service
@@ -23,6 +25,7 @@ public class MemoryService {
     @Autowired
     private OrderService orderService;
 	
+    //private List<OrderLocation> newlyUpdatedLocations = new ArrayList<OrderLocation>();
     private List<OrderLocation> newlyUpdatedLocations = new ArrayList<OrderLocation>();
     
 	public List<OrderLocation> getNewlyUpdatedLocations() {
@@ -39,6 +42,12 @@ public class MemoryService {
 	 * Update: User change seat or waiter in the middle of the take card away
 	 */
 	public void updateLocation(Location location, OrderUpdateStatus status) {
+		if(status == OrderUpdateStatus.DELETE) {
+			locationService.delete(location);
+		}
+		else if(status == OrderUpdateStatus.UPDATE) {
+			locationService.update(location);
+		}
 		List<Order> orders = orderService.findByCardId(location.getCardId());
 		int size = orders.size();
 		if(size <= 0) {
@@ -85,6 +94,43 @@ public class MemoryService {
 		}
 		OrderLocation orderLocation = new OrderLocation(order, location, OrderUpdateStatus.ADD);
 		newlyUpdatedLocations.add(orderLocation);
+		orderService.add(order);
 		
+	}
+	
+	public void receiveLocaltion(Location location) {
+		logger.info(location.toString());
+		String locationId = location.getLocationId();
+		String cardId = location.getCardId();
+		List<Location> existLocations = locationService.findByCardId(cardId);
+
+		int size = existLocations.size();
+		if (size <= 0) {
+			if (!locationId.equals(Constants.LocationDeleteFLag)) { // add
+				locationService.add(location);
+				updateLocation(location, OrderUpdateStatus.UPDATE);
+			}
+		} else if (size == 1) {
+			Location existLocation = existLocations.get(0);
+			if (locationId.equals(Constants.LocationDeleteFLag)) { // delete
+				List<Order> orders = orderService.findByCardId(cardId);
+				// If location deleted, could be think as order has delivered.
+				if (orders.size() > 0) {
+					for (Order order : orders) {
+						order.setFinish(true);
+						orderService.update(order);
+					}
+				}
+
+				//locationService.delete(existLocation);
+				updateLocation(existLocation, OrderUpdateStatus.DELETE);
+			} else { // update
+				// Change seat or in the middle of the take away
+				//locationService.update(existLocation);
+				updateLocation(existLocation, OrderUpdateStatus.UPDATE);
+			}
+		} else {
+			logger.warn("Abnormal status, One Card Id mapping to multi locations!");
+		}
 	}
 }

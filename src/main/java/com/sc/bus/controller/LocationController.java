@@ -6,7 +6,10 @@ import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +27,7 @@ import com.sc.bus.service.MemoryService;
 import com.sc.bus.service.OrderService;
 import com.sc.model.Location;
 import com.sc.model.LocationWrapper;
+import com.sc.model.Menu;
 import com.sc.model.Order;
 import com.sc.util.Constants;
 import com.sc.util.Constants.OrderUpdateStatus;
@@ -115,6 +119,15 @@ public class LocationController {
 			}
 	}
 	
+	/*
+     * Used for test
+     */
+    @RequestMapping(value = "/{id}/{cardId}", method = RequestMethod.POST)
+    public @ResponseBody void addLocation(@PathVariable String id, @PathVariable String cardId) {
+    	Location location = new Location(id, cardId);
+		locationService.add(location);
+    }
+    
 	/*
      * Used for test
      */

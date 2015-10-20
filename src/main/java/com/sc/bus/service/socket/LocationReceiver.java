@@ -9,9 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.sc.bus.service.LocationService;
 import com.sc.bus.service.MemoryService;
-import com.sc.bus.service.OrderService;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.Executors;
@@ -24,10 +22,6 @@ public class LocationReceiver {
 	@Value("${locationReceiver.port}")
 	private String port;
 
-	@Autowired
-    private LocationService locationService;
-    @Autowired
-    private OrderService orderService;
     @Autowired
     private MemoryService memoryService;
     
@@ -40,7 +34,7 @@ public class LocationReceiver {
 
         bootstrap.setPipelineFactory(new ChannelPipelineFactory() {
             public ChannelPipeline getPipeline() {
-                return Channels.pipeline(new LocationReceiverHandler(locationService, orderService, memoryService));
+                return Channels.pipeline(new LocationReceiverHandler(memoryService));
             }
         });
 

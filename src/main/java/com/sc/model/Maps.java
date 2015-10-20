@@ -13,9 +13,7 @@ public class Maps {
 
 	public Maps() {}
 
-	public Maps(String id, String locationId, Double xPos, Double yPos) {
-		super();
-		this.id = id;
+	public Maps(String locationId, Double xPos, Double yPos) {
 		this.locationId = locationId;
 		this.xPos = xPos;
 		this.yPos = yPos;
