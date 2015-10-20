@@ -22,6 +22,7 @@ import org.tempurl.ResponseHeader;
 import com.sc.bus.service.MemoryService;
 import com.sc.model.Menu;
 import com.sc.model.Order;
+import com.sc.util.DateUtil;
 
 @Endpoint
 public class CoffeeEndpoint {
@@ -31,7 +32,8 @@ public class CoffeeEndpoint {
 	@Autowired
     private MemoryService memoryService;
 	
-	SimpleDateFormat formatter = new SimpleDateFormat("YYYYMMDDHHMMSS");
+	SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+	SimpleDateFormat formatter2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  
 	
 	private static final String NAMESPACE_URI = "http://tempurl.org";
  
@@ -63,13 +65,15 @@ public class CoffeeEndpoint {
 		
 		String txDate = eSalesTotal.getTxdateYyyymmdd();
 		String txTime = eSalesTotal.getTxtimeHhmmss();
-		Long orderDate;
+		Date date = null;
 		try {
-			orderDate = formatter.parse(txDate + txTime).getTime();
+			date = formatter.parse(txDate + txTime);
 		} catch (ParseException e) {
 			System.out.println("Parse sales time error, use current time instead. " + e.getMessage());
-			orderDate = new Date().getTime();
+			date = new Date();
 		}
+		String dateStr = formatter2.format(date);
+		Long orderDate = DateUtil.getMilliseconds(dateStr);
 		
 		BigDecimal netAmount = eSalesTotal.getNetamount();
 		Double totalPrice = netAmount.doubleValue();
@@ -92,7 +96,7 @@ public class CoffeeEndpoint {
 		Order order = new Order(orderId, cardId, menus, orderDate, totalPrice, finish);
 		System.out.println(order);
 		//orderService.add(order);
-		memoryService.addOrder(order);
+		memoryService.receiveOrder(order);
 		
 		// 3) Send response
 		return getResponse(retCode, retMessage);

@@ -26,7 +26,6 @@ import com.sc.bus.service.MemoryService;
 import com.sc.bus.service.OrderService;
 import com.sc.model.Location;
 import com.sc.model.Menu;
-import com.sc.model.MenuWrapper;
 import com.sc.model.Order;
 import com.sc.model.OrderLocation;
 import com.sc.util.Constants.OrderUpdateStatus;
@@ -57,27 +56,32 @@ public class OrderController {
     	
     	response.setHeader("Last-Modified", lastModified);
     	
-    	List<OrderLocation> locationOrderList = new ArrayList<OrderLocation>();
-    	List<Location> locations = locationService.findAll();
-    	// TODO: should change to find not finish and today's orders.
-    	//List<Order> orders = orderService.findByFinishAndDate(false, new Date());
-    	List<Order> orders = orderService.findAll();
+    	List<OrderLocation> orderLocationList = new ArrayList<OrderLocation>();
+    	// Find not finish and today's orders.
+    	List<Order> orders = orderService.findByFinishAndDate(false, new Date());
     	
-    	for(Location location: locations) {
-    		String cardId = location.getCardId();
-    		List<Order> orderList = orderService.getOrderByCardId(cardId, orders);
-    		if(orderList.size() <= 0)
-    			continue;
-    		if(orderList.size() > 1) {
-    			//Still add to list, client should warn waiter to check this abnormal status.
-    			logger.warn("Abnormal status, Not finish and today's order count should be only one!");
+    	for(Order order: orders) {
+    		String cardId = order.getCardId();
+    		List<Location> locations = locationService.findByCardId(cardId);
+    		
+    		OrderUpdateStatus status = OrderUpdateStatus.NOTUSED;
+    		int locationSize = locations.size();
+    		
+    		//it's ok that location is null
+    		Location location = null;
+    		if(locationSize > 0) {
+    			location = locations.get(0);
     		}
-    		for(Order order: orderList) {
-				OrderLocation orderLocation = new OrderLocation(order, location, OrderUpdateStatus.NOTUSED);
-	    		locationOrderList.add(orderLocation);
-			}
-    	}
-    	return locationOrderList;
+    		if(locationSize > 1) {
+    			//Still add to list, client should warn waiter to check this abnormal status.
+    			logger.warn("Abnormal status, One Card ID should not mapping to multi locations!");
+    			status = OrderUpdateStatus.ABNORMAL;
+    		}
+    		
+			OrderLocation orderLocation = new OrderLocation(order, location, status);
+			orderLocationList.add(orderLocation);
+		}
+    	return orderLocationList;
     }
     
     /*
@@ -120,12 +124,13 @@ public class OrderController {
     	
     	List<Order> orders = orderService.findByOrderId(orderId);
     	if(orders.size() <= 0) {
+    		logger.error("Order ID " + orderId + " is not exist!");
     		res.put("code", "1");
         	res.put("msg", "Order is not exist!");
     		return res;
     	}
     	if(orders.size() > 1) {
-    		logger.error("Must be ensure unique order ID");
+    		logger.error("There're multi order exist for order " + orderId + " !");
     		res.put("code", "2");
         	res.put("msg", "Multi order ID!");
         	return res;
@@ -159,9 +164,11 @@ public class OrderController {
     	// if all exist menus' amount are 0, then mark it as finish
     	if(orderService.checkMenuFinish(existMenuList)) {
     		order.setFinish(true);
+    		orderService.saveToHistory(order);
     	}
     	else {
     		order.setFinish(false);
+    		orderService.deleteFromHistory(order);
     	}
     	orderService.update(order);
     	

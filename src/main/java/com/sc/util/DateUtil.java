@@ -11,7 +11,7 @@ import hirondelle.date4j.DateTime;
 
 public class DateUtil {
 	private static final String FORMAT_PATTERN = "YYYY-MM-DD";
-	private static TimeZone timeZone = TimeZone.getTimeZone("GMT+8");
+	private static TimeZone timeZone = TimeZone.getDefault();
 
 	public static void main(String[] args) {
 		String beginDate = "2013-01-01";

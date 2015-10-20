@@ -45,4 +45,11 @@ public class OrderDAO {
 		baseDB.drop(Constants.OrderCollectionName);
 	}
 
+	public void saveToHistory(Order order) {
+		baseDB.save(order, Constants.OrderLocationCollectionName);
+	}
+	
+	public void deleteFromHistory(Order order) {
+		baseDB.delete(order, Constants.OrderLocationCollectionName);
+	}
 }

@@ -61,16 +61,6 @@ public class OrderService {
 		return orderDAO.find(query);
 	}
 	
-	public List<Order> getOrderByCardId(String cardId, List<Order> orders) {
-		List<Order> orderList = new ArrayList<Order>();
-    	for(Order order: orders) {
-    		if(order.getCardId().equals(cardId)) {
-    			orderList.add(order);
-    		}
-    	}
-    	return orderList;
-    }
-	
 	public List<Menu> getMenuByMenuId(String menuId, List<Menu> menus) {
 		List<Menu> menuList = new ArrayList<Menu>();
     	for(Menu menu: menus) {
@@ -104,8 +94,7 @@ public class OrderService {
 		long endDateSecs = DateUtil.getMilliseconds(theDate);
 		
 		query.addCriteria(Criteria.where("finish").is(isFinish));
-		query.addCriteria(Criteria.where("date").gte(beginDateSecs));
-		query.addCriteria(Criteria.where("date").lte(endDateSecs));
+		query.addCriteria(Criteria.where("orderDate").gte(beginDateSecs).lte(endDateSecs));
 		return orderDAO.find(query);
 	}
 	
@@ -119,10 +108,16 @@ public class OrderService {
 		
 		query.addCriteria(Criteria.where("cardId").is(cardId));
 		query.addCriteria(Criteria.where("finish").is(isFinish));
-		query.addCriteria(Criteria.where("date").gte(beginDateSecs));
-		query.addCriteria(Criteria.where("date").lte(endDateSecs));
+		query.addCriteria(Criteria.where("orderDate").gte(beginDateSecs).lte(endDateSecs));
 		return orderDAO.find(query);
 	}
 	
+	public void saveToHistory(Order order) {
+		orderDAO.saveToHistory(order);
+	}
+	
+	public void deleteFromHistory(Order order) {
+		orderDAO.deleteFromHistory(order);
+	}
 	
 }

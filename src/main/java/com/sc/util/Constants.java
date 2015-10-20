@@ -11,11 +11,12 @@ public class Constants {
 	public static final String LocationCollectionName = "location";
 	public static final String OrderCollectionName = "order";
 	public static final String MapsCollectionName = "maps";
+	public static final String OrderLocationCollectionName = "orderlocation";
 	
 	public static final String LocationDeleteFLag = "0";
 
 	public enum OrderUpdateStatus {
-        NOTUSED, ADD, DELETE, UPDATE;
+        NOTUSED, ADD, DELETE, UPDATE, ABNORMAL;
     }
 
 }
