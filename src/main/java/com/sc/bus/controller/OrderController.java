@@ -60,6 +60,20 @@ public class OrderController {
     	// Find not finish and today's orders.
     	List<Order> orders = orderService.findByFinishAndDate(false, new Date());
     	
+    	Map<String, Order> distiguishOrder = new HashMap<String, Order>();
+    	Map<String, Integer> dupIdOrder = new HashMap<String, Integer>();
+    	for(Order order: orders) {
+    		String cardId = order.getCardId();
+    		Order exOrder = distiguishOrder.get(cardId);
+    		if(exOrder == null) {
+    			distiguishOrder.put(cardId, order);
+    		}
+    		else {
+    			dupIdOrder.put(exOrder.getOrderId(), 1);
+    			dupIdOrder.put(order.getOrderId(), 1);
+    		}
+    	}
+    	
     	for(Order order: orders) {
     		String cardId = order.getCardId();
     		List<Location> locations = locationService.findByCardId(cardId);
@@ -75,6 +89,12 @@ public class OrderController {
     		if(locationSize > 1) {
     			//Still add to list, client should warn waiter to check this abnormal status.
     			logger.warn("Abnormal status, One Card ID should not mapping to multi locations!");
+    			status = OrderUpdateStatus.ABNORMAL;
+    		}
+    		
+    		Integer dupFlag = dupIdOrder.get(order.getOrderId());
+    		if(dupFlag != null) {
+    			logger.warn("Abnormal status, This Card ID already used or received wrong Card ID!");
     			status = OrderUpdateStatus.ABNORMAL;
     		}
     		

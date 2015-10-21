@@ -54,14 +54,14 @@ public class CoffeeEndpoint {
 		Esalestotal eSalesTotal = request.getAstrRequest().getEsalestotal();
 		String orderId = eSalesTotal.getTxdocno();
 		
-		// ToDo: add check here.
+		// If card ID is 0, then means POS don't send card ID to me, also save the order, but mark it as abnormal.
 		String cardId = String.valueOf(eSalesTotal.getTableno());
-		if(cardId.equals("")) {
+		/*if(cardId.equals("0")) {
 			//add this order or not?
 			retCode = -1;
 			retMessage = "Order ID is empty";
 			return getResponse(retCode, retMessage);
-		}
+		}*/
 		
 		String txDate = eSalesTotal.getTxdateYyyymmdd();
 		String txTime = eSalesTotal.getTxtimeHhmmss();

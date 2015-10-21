@@ -50,6 +50,7 @@ public class MemoryService {
 			logger.warn("No such order, ignore this location data.");
 			return;
 		}
+		/*
 		else if(orderSize == 1) {
 			Order order = orders.get(0);
 			OrderLocation orderLocation = new OrderLocation(order, location, status);
@@ -75,6 +76,35 @@ public class MemoryService {
 			// That's because receive an abnormal order, but could not lost the order.
 			logger.warn("Abnormal status, One card ID, Not finish and today's order count should be only one!");
 			return;
+		}*/
+		
+		switch (status) {
+	        case ADD: 
+	        	locationService.add(location);
+	            break;
+	        case UPDATE: 
+	        	locationService.update(location);
+	            break;
+	        case DELETE: 
+	        	locationService.delete(location);
+	            break;
+	        default: 
+	        	logger.warn("No operation for this status.");
+	            break;
+		}
+		if(orderSize > 1) {
+			// That's because receive an abnormal order, but could not lost the order.
+			logger.warn("Abnormal status, This Card ID already used or received wrong Card ID!");
+			status = OrderUpdateStatus.ABNORMAL;
+		}
+		if(location.getCardId().equals("0")) {
+			logger.warn("Abnormal status, Recieved an order without card ID!");
+			status = OrderUpdateStatus.ABNORMAL;
+		}
+		for(Order order: orders) {
+			//add to newly list
+			OrderLocation orderLocation = new OrderLocation(order, location, status);
+			newlyUpdatedLocations.add(orderLocation);
 		}
 		
 	}
@@ -87,16 +117,23 @@ public class MemoryService {
 		logger.debug(order.toString());
 		
 		OrderUpdateStatus status = OrderUpdateStatus.ADD;
-		// Find today's unfinished orders, which contain specific card id.
-		List<Order> orders = orderService.findByCardIdAndFinishAndDate(order.getCardId(), false, new Date());
-		int size = orders.size();
-		
-		if(size > 0) {
-			// TODO: should still save the order?
-			//status = OrderUpdateStatus.ABNORMAL;
-			logger.warn("Not a standard operation: This Card ID already used or received wrong Card ID.");
-			return;
+		String cardId = order.getCardId();
+		if(cardId.equals("0")) {
+			logger.warn("Recieved an order without card ID.");
+			status = OrderUpdateStatus.ABNORMAL;
 		}
+		else {
+			// Find today's unfinished orders, which contain specific card id.
+			List<Order> orders = orderService.findByCardIdAndFinishAndDate(cardId, false, new Date());
+			int size = orders.size();
+			
+			if(size > 0) {
+				// Still save the order, but mark it as abnormal.
+				status = OrderUpdateStatus.ABNORMAL;
+				logger.warn("Not a standard operation: This Card ID already used or received wrong Card ID.");
+			}
+		}
+		
 		OrderLocation orderLocation = new OrderLocation(order, null, status);
 		newlyUpdatedLocations.add(orderLocation);
 		orderService.add(order);
@@ -133,6 +170,7 @@ public class MemoryService {
 				updateLocation(existLocation, OrderUpdateStatus.DELETE);
 			} else { // update
 				// Change seat or in the middle of the take away
+				existLocation.setLocationId(locationId);
 				updateLocation(existLocation, OrderUpdateStatus.UPDATE);
 			}
 		} else {

@@ -12,13 +12,12 @@ import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.sc.bus.controller.LocationController;
 import com.sc.bus.service.MemoryService;
 import com.sc.model.Location;
 
 public class LocationReceiverHandler extends SimpleChannelUpstreamHandler {
 
-	private static final Logger logger = LoggerFactory.getLogger(LocationController.class);
+	private static final Logger logger = LoggerFactory.getLogger(LocationReceiver.class);
 	
 	private MemoryService memoryService;
 
