@@ -27,6 +27,7 @@ public class LocationReceiverHandler extends SimpleChannelUpstreamHandler {
 	
 	@Override
 	public void messageReceived(ChannelHandlerContext ctx, MessageEvent e) {
+		//todo, first line count, second line 20,20,20
 		ChannelBuffer buffer = (ChannelBuffer) e.getMessage();
 		int size = buffer.readableBytes();
 		/*if (size != 20) {
