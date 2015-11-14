@@ -68,23 +68,28 @@ public class LocationReceiverHandler extends SimpleChannelUpstreamHandler {
 		String cardId = message.substring(cardBegin, cardEnd);
 		cardId = Integer.valueOf(cardId).toString();
 		String tableId = message.substring(tableBegin, tableEnd);
-		return new Location(tableId, cardId);
+		String locationDesc = MemoryService.getMappingColor(cardId);
+		return new Location(tableId, cardId, locationDesc);
 	}
 	
 	private List<Location> parseMessage2(String message) {
 		logger.info(message);
+		
 		int count = message.length() / 20;
 		List<Location> list = new ArrayList<Location>();
 		for(int i = 0; i < count; i++) {
-			int cardBegin = 12 * ( i+ 1);
-			int cardEnd = 16 * ( i+ 1);
-			int tableBegin = 16 * ( i+ 1);
-			int tableEnd = 20 * ( i+ 1);
+			int cardBegin = 12;
+			int cardEnd = 16;
+			int tableBegin = 16;
+			int tableEnd = 20;
 			String cardId = message.substring(cardBegin, cardEnd);
-			cardId = Integer.valueOf(cardId).toString();
+			cardId = String.valueOf(Integer.parseInt(cardId, 16));
 			String tableId = message.substring(tableBegin, tableEnd);
-			Location location = new Location(tableId, cardId);
+			tableId = String.valueOf(Integer.parseInt(tableId, 16));
+			String locationDesc = MemoryService.getMappingColor(cardId);
+			Location location = new Location(tableId, cardId, locationDesc);
 			list.add(location);
+			message = message.substring(20, message.length());
 		}
 		return list;
 	}

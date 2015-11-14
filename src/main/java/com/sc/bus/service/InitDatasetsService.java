@@ -30,7 +30,7 @@ public class InitDatasetsService {
 		for(int i = 1; i < 10; i++) {
 			int lid = random.nextInt(maxL) % (maxL - min + 1) + min;
 			int cid = random.nextInt(maxC) % (maxC - min + 1) + min;
-			Location location = new Location(String.valueOf(lid), String.valueOf(cid));
+			Location location = new Location(String.valueOf(lid), String.valueOf(cid), "red");
 			mongodb.save(location, Constants.LocationCollectionName);
 		}
 	}

@@ -2,7 +2,9 @@ package com.sc.bus.service;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,6 +26,33 @@ public class MemoryService {
     private LocationService locationService;
     @Autowired
     private OrderService orderService;
+    
+	private static Map<String, String> cardMapping = new HashMap<String, String>() {
+		/**
+		 * 
+		 */
+		private static final long serialVersionUID = 1L;
+
+		{
+			put("黄色", "1");
+			put("红色", "2");
+			put("绿色", "3");
+		}
+	};
+	
+	public static String getMappingCardId(String bearColor) {
+		return cardMapping.get(bearColor);
+	}
+	
+	public static String getMappingColor(String cardId) {
+		for (String key : cardMapping.keySet()) {
+		    String value = cardMapping.get(key);
+		    if(value.equals(cardId)) {
+		    	return key;
+		    }
+		}
+		return null;
+	}
 	
     //private List<OrderLocation> newlyUpdatedLocations = new ArrayList<OrderLocation>();
     private List<OrderLocation> newlyUpdatedLocations = new ArrayList<OrderLocation>();
@@ -42,43 +71,6 @@ public class MemoryService {
 	 * Update: User change seat or waiter in the middle of the take card away
 	 */
 	public void updateLocation(Location location, OrderUpdateStatus status) {
-		//Not finish and today's order
-		List<Order> orders = orderService.findByCardIdAndFinishAndDate(location.getCardId(), false, new Date());
-		int orderSize = orders.size();
-		if(orderSize <= 0) {
-			// In the add operation, if no order, it's not standard operation
-			//logger.warn("No such order, ignore this location data.");
-			//return;
-			logger.warn("No such order, nothing to do here.");
-		}
-		/*
-		else if(orderSize == 1) {
-			Order order = orders.get(0);
-			OrderLocation orderLocation = new OrderLocation(order, location, status);
-			newlyUpdatedLocations.add(orderLocation);
-			
-			switch (status) {
-	            case ADD: 
-	            	locationService.add(location);
-	                break;
-	            case UPDATE: 
-	            	locationService.update(location);
-	                break;
-	            case DELETE: 
-	            	locationService.delete(location);
-	                break;
-	            default: 
-	            	logger.warn("No operation for this status.");
-	                break;
-			}
-			
-		}
-		else if(orderSize > 1) {
-			// That's because receive an abnormal order, but could not lost the order.
-			logger.warn("Abnormal status, One card ID, Not finish and today's order count should be only one!");
-			return;
-		}*/
-		
 		switch (status) {
 	        case ADD: 
 	        	locationService.add(location);
@@ -93,21 +85,33 @@ public class MemoryService {
 	        	logger.warn("No operation for this status.");
 	            break;
 		}
-		if(orderSize > 1) {
-			// That's because receive an abnormal order, but could not lost the order.
-			logger.warn("Abnormal status, This Card ID already used or received wrong Card ID!");
-			status = OrderUpdateStatus.ABNORMAL;
-		}
-		if(location.getCardId().equals("0")) {
-			logger.warn("Abnormal status, Recieved an order without card ID!");
-			status = OrderUpdateStatus.ABNORMAL;
-		}
-		for(Order order: orders) {
-			//add to newly list
-			OrderLocation orderLocation = new OrderLocation(order, location, status);
-			newlyUpdatedLocations.add(orderLocation);
+		
+		List<Location> dupLocations = locationService.findByLocationId(location.getLocationId());
+		if(dupLocations.size() > 1) {
+			logger.warn("Abnormal status(Update Location), This Card ID with multi same Location ID, Maybe multi user stay in one place!");
+			status = OrderUpdateStatus.CARD_WITH_MULTI_LOCATION;
 		}
 		
+		//Not finish and today's order
+		List<Order> orders = orderService.findByCardIdAndFinishAndDate(location.getCardId(), false, new Date());
+		int orderSize = orders.size();
+		if(orderSize > 1) {
+			// That's because receive an abnormal order, but could not lost the order.
+			logger.warn("Abnormal status(Update Location): This Card ID already used or received wrong Card ID!");
+			status = OrderUpdateStatus.ORDER_WITH_SAME_CARD;
+		}
+		if(orderSize <= 0) {
+			logger.warn("No such order(Update Location): still save the location and notify newly update.");
+			OrderLocation orderLocation = new OrderLocation(null, location, status);
+			newlyUpdatedLocations.add(orderLocation);
+		}
+		else {
+			for(Order order: orders) {
+				//add to newly list
+				OrderLocation orderLocation = new OrderLocation(order, location, status);
+				newlyUpdatedLocations.add(orderLocation);
+			}
+		}
 	}
 	
 	
@@ -119,9 +123,9 @@ public class MemoryService {
 		
 		OrderUpdateStatus status = OrderUpdateStatus.ADD;
 		String cardId = order.getCardId();
-		if(cardId.equals("0")) {
-			logger.warn("Recieved an order without card ID.");
-			status = OrderUpdateStatus.ABNORMAL;
+		if(cardId.equals(Constants.EmptyCardFlag)) {
+			logger.warn("Abnormal status(Receive Order): Recieved an order without card ID.");
+			status = OrderUpdateStatus.ORDER_WITH_NO_CARD;
 		}
 		else {
 			// Find today's unfinished orders, which contain specific card id.
@@ -130,8 +134,8 @@ public class MemoryService {
 			
 			if(size > 0) {
 				// Still save the order, but mark it as abnormal.
-				status = OrderUpdateStatus.ABNORMAL;
-				logger.warn("Not a standard operation: This Card ID already used or received wrong Card ID.");
+				status = OrderUpdateStatus.ORDER_WITH_SAME_CARD;
+				logger.warn("Abnormal status(Receive Order): This Card ID already used or received wrong Card ID.");
 			}
 		}
 		
@@ -158,16 +162,6 @@ public class MemoryService {
 		} else if (locationSize == 1) {
 			Location existLocation = existLocations.get(0);
 			if (locationId.equals(Constants.LocationDeleteFLag)) { // delete
-				/*
-				List<Order> orders = orderService.findByCardId(cardId);
-				// If location deleted, could be think as order has delivered.
-				if (orders.size() > 0) {
-					for (Order order : orders) {
-						order.setFinish(true);
-						orderService.update(order);
-					}
-				}
-				*/
 				updateLocation(existLocation, OrderUpdateStatus.DELETE);
 			} else { // update
 				// Change seat or in the middle of the take away
@@ -175,7 +169,8 @@ public class MemoryService {
 				updateLocation(existLocation, OrderUpdateStatus.UPDATE);
 			}
 		} else {
-			logger.warn("Abnormal status, One Card Id should not mapping to multi locations!");
+			//This could not be happen.
+			logger.warn("Abnormal status(Receive Location), One Card Id should not mapping to multi locations!");
 		}
 	}
 }

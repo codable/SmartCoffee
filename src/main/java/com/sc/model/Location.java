@@ -12,42 +12,47 @@ public class Location {
 	@Indexed(unique = true)
 	private String cardId;
 
+	private String locationDesc;
+
 	public Location() {}
-	
-	public Location(String locationId, String cardId) {
-		super();
+
+	public Location(String locationId, String cardId, String locationDesc) {
 		this.locationId = locationId;
 		this.cardId = cardId;
-	}
-	
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
+		this.locationDesc = locationDesc;
 	}
 
 	public String getLocationId() {
 		return locationId;
 	}
+
 	public void setLocationId(String locationId) {
 		this.locationId = locationId;
 	}
+
 	public String getCardId() {
 		return cardId;
 	}
+
 	public void setCardId(String cardId) {
 		this.cardId = cardId;
 	}
 
+	public String getLocationDesc() {
+		return locationDesc;
+	}
+
+	public void setLocationDesc(String locationDesc) {
+		this.locationDesc = locationDesc;
+	}
+
 	@Override
 	public String toString() {
-		return "Location [locationId=" + locationId + ", cardId="
-				+ cardId + "]";
+		return "Location [id=" + id + ", locationId=" + locationId
+				+ ", cardId=" + cardId + ", locationDesc=" + locationDesc + "]";
 	}
 	
-	
+		
 	
 	
 }

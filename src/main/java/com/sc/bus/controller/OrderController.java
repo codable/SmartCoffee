@@ -57,11 +57,44 @@ public class OrderController {
     	response.setHeader("Last-Modified", lastModified);
     	
     	List<OrderLocation> orderLocationList = new ArrayList<OrderLocation>();
+    	
+    	List<Location> locationList = locationService.findAll();
+    	
+    	for(Location location: locationList) {
+    		OrderUpdateStatus status = OrderUpdateStatus.NOTUSED;
+    		//1, check duplicate location
+    		List<Location> dupLocations = locationService.findByLocationId(location.getLocationId());
+    		if(dupLocations.size() > 1) {
+    			logger.warn("Abnormal status(Get All Orders), CardId with multi same LocationId, Maybe multi user stay in one place!");
+    			status = OrderUpdateStatus.CARD_WITH_MULTI_LOCATION;
+    		}
+    		
+    		//2, check duplicate order with same cardId
+    		List<Order> orders = orderService.findByCardIdAndFinishAndDate(location.getCardId(), false, new Date());
+    		if(orders.size() > 1) {
+    			logger.warn("Abnormal status(Get All Orders), This Card ID already used or received wrong Card ID!");
+    			status = OrderUpdateStatus.ORDER_WITH_SAME_CARD;
+    		}
+    		if(orders.size() <= 0) {
+    			OrderLocation orderLocation = new OrderLocation(null, location, status);
+    			orderLocationList.add(orderLocation);
+    		}
+    		else {
+    			for(Order order: orders) {
+    				OrderLocation orderLocation = new OrderLocation(order, location, status);
+        			orderLocationList.add(orderLocation);
+    			}
+    		}
+    		
+    	}
+
+    	/*
     	// Find not finish and today's orders.
     	List<Order> orders = orderService.findByFinishAndDate(false, new Date());
     	
     	Map<String, Order> distiguishOrder = new HashMap<String, Order>();
     	Map<String, Integer> dupIdOrder = new HashMap<String, Integer>();
+    	
     	for(Order order: orders) {
     		String cardId = order.getCardId();
     		Order exOrder = distiguishOrder.get(cardId);
@@ -101,6 +134,7 @@ public class OrderController {
 			OrderLocation orderLocation = new OrderLocation(order, location, status);
 			orderLocationList.add(orderLocation);
 		}
+    	*/
     	return orderLocationList;
     }
     
@@ -207,7 +241,7 @@ public class OrderController {
 		
 		Order order = new Order(UUID.randomUUID().toString(), id, list, new Date().getTime(), 58.0, isFinish);
 		orderService.add(order);
-    	Location location = new Location(id, id);
+    	Location location = new Location(id, id, "red");
 		locationService.add(location);
     }
     

@@ -22,6 +22,7 @@ import org.tempurl.ResponseHeader;
 import com.sc.bus.service.MemoryService;
 import com.sc.model.Menu;
 import com.sc.model.Order;
+import com.sc.util.Constants;
 import com.sc.util.DateUtil;
 
 @Endpoint
@@ -55,7 +56,7 @@ public class CoffeeEndpoint {
 		String orderId = eSalesTotal.getTxdocno();
 		
 		// If card ID is 0, then means POS don't send card ID to me, also save the order, but mark it as abnormal.
-		String cardId = String.valueOf(eSalesTotal.getTableno());
+		//String cardId = String.valueOf(eSalesTotal.getTableno());
 		/*if(cardId.equals("0")) {
 			//add this order or not?
 			retCode = -1;
@@ -80,6 +81,7 @@ public class CoffeeEndpoint {
 		
 		Boolean finish = false;
 		
+		String cardId = Constants.EmptyCardFlag;
 		// 2) Get every item sales info
 		List<Esalesitem> eSalesItems = request.getAstrRequest().getEsalesitems().getEsalesitem();
 		List<Menu> menus = new ArrayList<Menu>();
@@ -89,6 +91,10 @@ public class CoffeeEndpoint {
 			Double price = eSalesItem.getNetamount().doubleValue();
 			Integer amount = eSalesItem.getQty().intValue();
 			
+			String mappingCardId = MemoryService.getMappingCardId(name);
+			if(mappingCardId != null) {
+				cardId = mappingCardId;
+			}
 			Menu menu = new Menu(productId, name, price, amount, amount);
 			menus.add(menu);
 		}

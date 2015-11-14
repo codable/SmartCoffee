@@ -42,4 +42,10 @@ public class LocationService {
 		query.addCriteria(Criteria.where("cardId").is(cardId));
 		return locationDAO.find(query);
 	}
+	
+	public List<Location> findByLocationId(String locationId) {
+		Query query = new Query();
+		query.addCriteria(Criteria.where("locationId").is(locationId));
+		return locationDAO.find(query);
+	}
 }

@@ -58,7 +58,7 @@ public class LocationController {
      */
     @RequestMapping(value = "/{id}/{cardId}", method = RequestMethod.POST)
     public @ResponseBody void addLocation(@PathVariable String id, @PathVariable String cardId) {
-    	Location location = new Location(id, cardId);
+    	Location location = new Location(id, cardId, "red");
 		locationService.add(location);
     }
     
