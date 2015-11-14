@@ -3,6 +3,8 @@ package com.sc.bus.service.socket;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.channel.ChannelHandlerContext;
@@ -49,8 +51,10 @@ public class LocationReceiverHandler extends SimpleChannelUpstreamHandler {
 		
 		e.getChannel().close();
 		
-		Location location = parseMessage(sb.toString());
-		this.memoryService.receiveLocaltion(location);
+		List<Location> locationList = parseMessage2(sb.toString());
+		for(Location location: locationList) {
+			this.memoryService.receiveLocaltion(location);
+		}
 	}
 	
 	private Location parseMessage(String message) {
@@ -65,6 +69,24 @@ public class LocationReceiverHandler extends SimpleChannelUpstreamHandler {
 		cardId = Integer.valueOf(cardId).toString();
 		String tableId = message.substring(tableBegin, tableEnd);
 		return new Location(tableId, cardId);
+	}
+	
+	private List<Location> parseMessage2(String message) {
+		logger.info(message);
+		int count = message.length() / 20;
+		List<Location> list = new ArrayList<Location>();
+		for(int i = 0; i < count; i++) {
+			int cardBegin = 12 * ( i+ 1);
+			int cardEnd = 16 * ( i+ 1);
+			int tableBegin = 16 * ( i+ 1);
+			int tableEnd = 20 * ( i+ 1);
+			String cardId = message.substring(cardBegin, cardEnd);
+			cardId = Integer.valueOf(cardId).toString();
+			String tableId = message.substring(tableBegin, tableEnd);
+			Location location = new Location(tableId, cardId);
+			list.add(location);
+		}
+		return list;
 	}
 
 	@Override

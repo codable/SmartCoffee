@@ -1,8 +1,13 @@
 package com.sc.bus.controller;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
+import org.ini4j.Ini;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
@@ -12,12 +17,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sc.bus.service.MapService;
 import com.sc.model.Maps;
+import com.sc.model.NFC;
 
 
 @Controller
@@ -62,4 +69,24 @@ public class MapController {
     public @ResponseBody String getFloors() {
     	return this.floor;
     }
+    
+    @RequestMapping(value = "", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
+	public ResponseEntity<Maps> updateMaps(@RequestBody Maps maps) throws IOException {
+    	String locationId = maps.getLocationId();
+    	if(locationId.equals("")) {
+    		return new ResponseEntity<Maps>(maps, HttpStatus.BAD_REQUEST);
+    	}
+    	List<Maps> mapsList = mapService.findByLocationId(locationId);
+    	if(mapsList.size() <=0) {
+    		mapService.add(maps);
+    	}
+    	else {
+    		Maps m = mapsList.get(0);
+    		m.setxPos(maps.getxPos());
+    		m.setyPos(maps.getyPos());
+    		mapService.update(m);
+    	}
+		return new ResponseEntity<Maps>(maps, HttpStatus.OK);
+	}
+	
 }

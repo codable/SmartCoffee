@@ -47,8 +47,9 @@ public class MemoryService {
 		int orderSize = orders.size();
 		if(orderSize <= 0) {
 			// In the add operation, if no order, it's not standard operation
-			logger.warn("No such order, ignore this location data.");
-			return;
+			//logger.warn("No such order, ignore this location data.");
+			//return;
+			logger.warn("No such order, nothing to do here.");
 		}
 		/*
 		else if(orderSize == 1) {

@@ -2,9 +2,9 @@ package com.sc.bus.controller;
 
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 
-import org.apache.commons.io.FileUtils;
 import org.ini4j.Ini;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,23 +21,26 @@ public class NFCController {
 	
 	@RequestMapping(value = "", method = RequestMethod.POST, produces = "application/json;charset=UTF-8")
 	public ResponseEntity<NFC> updateNFC(@RequestBody NFC nfc) throws IOException {
-		/*
+		String nfcId = nfc.getNfcId();
+		String cardId = nfc.getCardId();
+		if(nfcId.equals("") || cardId.equals("")) {
+			return new ResponseEntity<NFC>(nfc, HttpStatus.BAD_REQUEST);
+		}
 		Ini ini = new Ini();
-        ini.load(new FileReader("c:/nfc.txt"));
+		File file = new File("c:/nfc.txt");
+        ini.load(new FileReader(file));
         
-        Ini.Section section = ini.get(nfc.getNfcId());
+        Ini.Section section = ini.get(nfcId);
         if(section == null) {
-        	section = ini.add(nfc.getNfcId());
+        	section = ini.add(nfcId);
         }
-        String cardId = section.get("cardId");
-        
-        
-        if(cardId != null && !cardId.equals(nfc.getCardId())) {
-        	
+        String iniCardId = section.get("cardId");
+        if(iniCardId != null && iniCardId.equals(cardId)) {
+        	System.out.println("Do nothing");
+        	return new ResponseEntity<NFC>(nfc, HttpStatus.OK);
         }
-        */
-		String data = "[" + nfc.getNfcId() + "]\r\ncardId=" + nfc.getCardId() + "\r\n";
-		FileUtils.writeStringToFile(new File("c:/nfc.txt"), data, true);
+        section.put("cardId", cardId);
+        ini.store(new FileWriter(file));
 		
 		return new ResponseEntity<NFC>(nfc, HttpStatus.OK);
 	}
