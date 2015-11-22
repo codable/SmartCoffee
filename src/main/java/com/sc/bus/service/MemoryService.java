@@ -34,9 +34,16 @@ public class MemoryService {
 		private static final long serialVersionUID = 1L;
 
 		{
-			put("黄色", "1");
-			put("红色", "2");
-			put("绿色", "3");
+			put("紫色熊", "4");
+			put("黄色熊", "5");
+			put("红色熊", "6");
+			put("绿色熊", "7");
+			put("蓝色熊", "8");
+			put("白色熊", "9");
+			put("灰色熊", "10");
+			put("黑色熊", "11");
+			put("咖啡色熊", "12");
+			put("银色熊", "13");
 		}
 	};
 	
@@ -82,13 +89,13 @@ public class MemoryService {
 	        	locationService.delete(location);
 	            break;
 	        default: 
-	        	logger.warn("No operation for this status.");
+	        	logger.warn("3 - No operation for this status.");
 	            break;
 		}
 		
 		List<Location> dupLocations = locationService.findByLocationId(location.getLocationId());
 		if(dupLocations.size() > 1) {
-			logger.warn("Abnormal status(Update Location), This Card ID with multi same Location ID, Maybe multi user stay in one place!");
+			logger.warn("3 - Abnormal status(Update Location), This Card ID with multi same Location ID, Maybe multi user stay in one place!");
 			status = OrderUpdateStatus.CARD_WITH_MULTI_LOCATION;
 		}
 		
@@ -97,11 +104,11 @@ public class MemoryService {
 		int orderSize = orders.size();
 		if(orderSize > 1) {
 			// That's because receive an abnormal order, but could not lost the order.
-			logger.warn("Abnormal status(Update Location): This Card ID already used or received wrong Card ID!");
+			logger.warn("3 - Abnormal status(Update Location): This Card ID already used or received wrong Card ID!");
 			status = OrderUpdateStatus.ORDER_WITH_SAME_CARD;
 		}
 		if(orderSize <= 0) {
-			logger.warn("No such order(Update Location): still save the location and notify newly update.");
+			logger.warn("3 - No such order(Update Location): still save the location and notify newly update.");
 			OrderLocation orderLocation = new OrderLocation(null, location, status);
 			newlyUpdatedLocations.add(orderLocation);
 		}
@@ -124,7 +131,7 @@ public class MemoryService {
 		OrderUpdateStatus status = OrderUpdateStatus.ADD;
 		String cardId = order.getCardId();
 		if(cardId.equals(Constants.EmptyCardFlag)) {
-			logger.warn("Abnormal status(Receive Order): Recieved an order without card ID.");
+			logger.warn("1 - Abnormal status(Receive Order): Recieved an order without card ID.");
 			status = OrderUpdateStatus.ORDER_WITH_NO_CARD;
 		}
 		else {
@@ -135,7 +142,7 @@ public class MemoryService {
 			if(size > 0) {
 				// Still save the order, but mark it as abnormal.
 				status = OrderUpdateStatus.ORDER_WITH_SAME_CARD;
-				logger.warn("Abnormal status(Receive Order): This Card ID already used or received wrong Card ID.");
+				logger.warn("1 - Abnormal status(Receive Order): This Card ID already used or received wrong Card ID.");
 			}
 		}
 		
@@ -170,7 +177,7 @@ public class MemoryService {
 			}
 		} else {
 			//This could not be happen.
-			logger.warn("Abnormal status(Receive Location), One Card Id should not mapping to multi locations!");
+			logger.warn("2 - Abnormal status(Receive Location), One Card Id should not mapping to multi locations!");
 		}
 	}
 }

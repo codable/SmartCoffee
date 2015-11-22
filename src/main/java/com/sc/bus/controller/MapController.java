@@ -1,10 +1,13 @@
 package com.sc.bus.controller;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Base64;
 import java.util.List;
 
 import org.ini4j.Ini;
@@ -60,6 +63,31 @@ public class MapController {
         headers.setContentType(MediaType.IMAGE_PNG);
 
         return new ResponseEntity<InputStreamResource>(new InputStreamResource(in), headers, HttpStatus.OK);
+    }
+    
+    @RequestMapping(value = "/picture2/{floorId}", method = RequestMethod.GET, produces = "application/json;charset=UTF-8")
+    public @ResponseBody String getMapPicture2(@PathVariable String floorId) throws IOException {
+    	if(Integer.valueOf(floorId) > Integer.valueOf(this.floor))
+    		return null;
+    	
+    	String imagePath = "/floor_images/" + floorId + ".png";
+    	InputStream in = this.getClass().getResourceAsStream(imagePath);
+    	ByteArrayOutputStream bos=new ByteArrayOutputStream();
+    	int b;
+    	byte[] buffer = new byte[1024];
+    	while((b=in.read(buffer))!=-1){
+    	   bos.write(buffer,0,b);
+    	}
+    	byte[] fileBytes=bos.toByteArray();
+    	in.close();
+    	bos.close();
+
+    	
+    	byte[] encoded=Base64.getEncoder().encode(fileBytes);
+    	String encodedString = new String(encoded);
+
+    	
+    	return encodedString;
     }
     
     /*
