@@ -6,6 +6,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.logging.log4j.Level;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ExceptionEvent;
@@ -97,7 +98,7 @@ public class LocationReceiverHandler extends SimpleChannelUpstreamHandler {
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
 		// Close the connection when an exception is raised.
-		e.getCause().printStackTrace();
-		e.getChannel().close();
+		 logger.warn("Unexpected exception from downstream.", e.getCause());
+	     e.getChannel().close();
 	}
 }

@@ -46,7 +46,7 @@ public class CoffeeEndpoint {
 	@PayloadRoot(namespace = NAMESPACE_URI, localPart = "postesalescreate")
 	@ResponsePayload
 	public PostesalescreateResponse getPostSales(@RequestPayload Postesalescreate request) {
-		System.out.println(request.toString());
+		//System.out.println(request.toString());
 		
 		int retCode = 0;
 		String retMessage = "Success";
@@ -100,7 +100,7 @@ public class CoffeeEndpoint {
 		}
 		
 		Order order = new Order(orderId, cardId, menus, orderDate, totalPrice, finish);
-		System.out.println(order);
+		//System.out.println(order);
 		//orderService.add(order);
 		memoryService.receiveOrder(order);
 		

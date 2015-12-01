@@ -1,10 +1,16 @@
 package com.sc.bus.service;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+
+import javax.annotation.PostConstruct;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,10 +33,21 @@ public class MemoryService {
     @Autowired
     private OrderService orderService;
     
+    private static Map<String, String> cardMapping = new HashMap<String, String>();
+    
+    @PostConstruct
+    private void initCardMappingInfo () throws UnsupportedEncodingException, IOException {
+    	Properties prop = new Properties();
+    	prop.load(new InputStreamReader(MemoryService.class.getResourceAsStream("/bear.properties"), "UTF-8"));         
+    	for(Object key: prop.keySet()) {
+    		Object val = prop.getProperty((String) key);
+    		cardMapping.put((String)key, (String)val);
+    	}
+    }
+    
+    /*
 	private static Map<String, String> cardMapping = new HashMap<String, String>() {
-		/**
-		 * 
-		 */
+		
 		private static final long serialVersionUID = 1L;
 
 		{
@@ -45,7 +62,7 @@ public class MemoryService {
 			put("咖啡色熊", "12");
 			put("银色熊", "13");
 		}
-	};
+	};*/
 	
 	public static String getMappingCardId(String bearColor) {
 		return cardMapping.get(bearColor);
@@ -92,7 +109,7 @@ public class MemoryService {
 	        	logger.warn("3 - No operation for this status.");
 	            break;
 		}
-		
+		/*
 		List<Location> dupLocations = locationService.findByLocationId(location.getLocationId());
 		if(dupLocations.size() > 1) {
 			logger.warn("3 - Abnormal status(Update Location), This Card ID with multi same Location ID, Maybe multi user stay in one place!");
@@ -118,7 +135,7 @@ public class MemoryService {
 				OrderLocation orderLocation = new OrderLocation(order, location, status);
 				newlyUpdatedLocations.add(orderLocation);
 			}
-		}
+		}*/
 	}
 	
 	
@@ -146,8 +163,8 @@ public class MemoryService {
 			}
 		}
 		
-		OrderLocation orderLocation = new OrderLocation(order, null, status);
-		newlyUpdatedLocations.add(orderLocation);
+		//OrderLocation orderLocation = new OrderLocation(order, null, status);
+		//newlyUpdatedLocations.add(orderLocation);
 		orderService.add(order);
 	}
 	

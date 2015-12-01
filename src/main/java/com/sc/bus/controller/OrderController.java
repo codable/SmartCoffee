@@ -65,14 +65,14 @@ public class OrderController {
     		//1, check duplicate location
     		List<Location> dupLocations = locationService.findByLocationId(location.getLocationId());
     		if(dupLocations.size() > 1) {
-    			logger.warn("4 - Abnormal status(Get All Orders), CardId with multi same LocationId, Maybe multi user stay in one place!");
+    			//logger.warn("4 - Abnormal status(Get All Orders), CardId with multi same LocationId, Maybe multi user stay in one place!");
     			status = OrderUpdateStatus.CARD_WITH_MULTI_LOCATION;
     		}
     		
     		//2, check duplicate order with same cardId
     		List<Order> orders = orderService.findByCardIdAndFinishAndDate(location.getCardId(), false, new Date());
     		if(orders.size() > 1) {
-    			logger.warn("4 - Abnormal status(Get All Orders), This Card ID already used or received wrong Card ID!");
+    			//logger.warn("4 - Abnormal status(Get All Orders), This Card ID already used or received wrong Card ID!");
     			status = OrderUpdateStatus.ORDER_WITH_SAME_CARD;
     		}
     		location.setLocationDesc(MemoryService.getMappingColor(location.getCardId()));
@@ -212,9 +212,9 @@ public class OrderController {
     		}
     		// update exist menu's amount
     		existMenu.setCurrentAmount(currentAmount);
-    		logger.info(existMenu.toString());
+    		//logger.info(existMenu.toString());
     	}
-    	logger.info(existMenuList.toString());
+    	//logger.info(existMenuList.toString());
     	order.setMenus(existMenuList);
     	// if all exist menus' amount are 0, then mark it as finish
     	if(orderService.checkMenuFinish(existMenuList)) {
