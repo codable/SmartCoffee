@@ -63,10 +63,12 @@ public class OrderController {
     	for(Location location: locationList) {
     		OrderUpdateStatus status = OrderUpdateStatus.NOTUSED;
     		//1, check duplicate location
-    		List<Location> dupLocations = locationService.findByLocationId(location.getLocationId());
-    		if(dupLocations.size() > 1) {
-    			//logger.warn("4 - Abnormal status(Get All Orders), CardId with multi same LocationId, Maybe multi user stay in one place!");
-    			status = OrderUpdateStatus.CARD_WITH_MULTI_LOCATION;
+    		if(!location.getLocationId().equals("0")) {
+    			List<Location> dupLocations = locationService.findByLocationId(location.getLocationId());
+        		if(dupLocations.size() > 1) {
+        			//logger.warn("4 - Abnormal status(Get All Orders), CardId with multi same LocationId, Maybe multi user stay in one place!");
+        			status = OrderUpdateStatus.CARD_WITH_MULTI_LOCATION;
+        		}
     		}
     		
     		//2, check duplicate order with same cardId
@@ -242,7 +244,7 @@ public class OrderController {
 		
 		Order order = new Order(UUID.randomUUID().toString(), id, list, new Date().getTime(), 58.0, isFinish);
 		orderService.add(order);
-    	Location location = new Location(id, id, "red");
+    	Location location = new Location(id, id, MemoryService.getMappingColor(id));
 		locationService.add(location);
     }
     

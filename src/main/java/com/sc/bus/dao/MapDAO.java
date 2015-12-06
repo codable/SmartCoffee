@@ -40,5 +40,9 @@ public class MapDAO {
 		return baseDB.find(query, Maps.class, Constants.MapsCollectionName);
 
 	}
+	
+	public void drop() {
+		baseDB.drop(Constants.MapsCollectionName);
+	}
 
 }

@@ -41,22 +41,7 @@ $(function() {
 	
 	//display all position data or specific one
 	if(typeof x == 'undefined' || typeof y == 'undefined' || typeof locationId == 'undefined') {
-		$.ajax({
-			url: "api/map",
-			type: 'GET',
-			dataType: 'json',
-			cache: false,
-			async: false,
-			success: function(data){
-				data.forEach(function(e) {
-					var recordFloor = e.locationId.substring(0, 1);
-					if(recordFloor == floor) {
-						recordTableId = parseInt(e.locationId.substring(1, 4));
-						setMark(e.xPos, e.yPos, recordTableId);
-					}
-				});
-		    }
-		});
+		loadAllMark(floor);
 	}
 	else {
 		setMark(x, y, tableId);
@@ -75,8 +60,104 @@ $(function() {
 		};
 		put(table, e.pageX, e.pageY, floor);
 	});
+	
+
+	$('#floors').change(function() {
+		var val = $(this).children('option:selected').val();
+		$("#floor_info").html("");
+		for(var i=1; i <= val; i++) {
+			$("#floor_info").append("<p>第" + i + "层编号范围：<input name=\"floor_begin[]\" type=\"text\" id=\"floor_" + i + "_begin\"> ~ <input name=\"floor_end[]\" type=\"text\" id=\"floor_" + i + "_end\"></p>");
+		}
+	});
+	
+	$('#total_area').change(function() {
+		var val = $(this).val();
+		$("#area_info").html("");
+		for(var i=1; i <= val; i++) {
+			$("#area_info").append("<p>区域号：<input name=\"area[]\" type=\"text\" id=\"area_" + i + "\"/>，编号范围：<input name=\"area_begin[]\" type=\"text\" id=\"area_" + i + "_begin\"> ~ <input name=\"area_end[]\" type=\"text\" id=\"area_" + i + "_end\"></p>");
+		}
+	});
+	
+	$('#clearAll').click(function() {
+		var a = confirm("确认要清空吗？");
+		if (a == true){
+			$.ajax({
+				url: "api/map",
+				type: 'DELETE',
+				dataType: 'json',
+				cache: false,
+				async: false,
+				success: function(data){
+					$('#mark').html("");
+			    },
+			    error:function(data){
+			    	$('#mark').html("");
+			    }
+			});
+		}
+	});
+	$('#revokeLatest').click(function() {
+		var a = confirm("确认要删除吗？");
+		if (a == true){
+			$.ajax({
+				url: "api/map/revoke",
+				type: 'DELETE',
+				dataType: 'json',
+				cache: false,
+				async: false,
+				success: function(data){
+					$('#mark').html("");
+					loadAllMark(floor);
+			    },
+			    error:function(data){
+			    	$('#mark').html("");
+			    	loadAllMark(floor);
+			    }
+			});
+		}
+	});
+
+	$('#commitData').click(function() {
+		$.ajax({
+			url: "api/map/mapping",
+			type: 'POST',
+			cache: false,
+			async: false,
+			dataType:'json',
+			data: $('#formData').serialize(),
+			success: function(data){
+				if(data.res == false) {
+					alert("请正确填写！");
+				}
+				else {
+					alert("更新成功！");
+				}
+		    },
+		    error:function(data){
+		    	//console.log(data);
+		    }
+		});
+	});
 });
 
+function loadAllMark(floor) {
+	$.ajax({
+		url: "api/map",
+		type: 'GET',
+		dataType: 'json',
+		cache: false,
+		async: false,
+		success: function(data){
+			data.forEach(function(e) {
+				if(e.floor == floor) {
+					if(e.xPos != 0 && e.yPos != 0) {
+						setMark(e.xPos, e.yPos, e.locationId);
+					}
+				}
+			});
+	    }
+	});
+}
 
 function put(table, displayX, displayY, floor) {	
 	var tableId = table.id.trim();
@@ -84,32 +165,24 @@ function put(table, displayX, displayY, floor) {
 		return;
 	}
 	var locationIdLength = tableId.length;
-	var locationId;
 	if(locationIdLength == 0 || locationIdLength > 3) {
 		return;
 	}
-	else if(locationIdLength == 1) {
-		locationId = "00" + tableId;
-	}
-	else if(locationIdLength == 2) {
-		locationId = "0" + tableId;
-	}
-	else if(locationIdLength == 3) {
-		locationId = tableId;
-	} 
-	var data = { locationId: floor + locationId, xPos: table.x, yPos: table.y };
+	var data = { locationId: tableId, xPos: table.x, yPos: table.y, floor: floor };
 	$.ajax({
 		url: 'api/map',
 		type: 'post',
 		data: JSON.stringify(data),
 		headers: { 'content-type': 'application/json' },
 		dataType: 'json',
+		async: false,
 		success: function (res) {
-			$('#board').html("坐标信息：" + res.locationId + ': ' + res.xPos + ',' + res.yPos);
+			$('#board').html("坐标信息：编号(" + res.locationId + '): X(' + res.xPos + '), Y(' + res.yPos + ')' );
 		}
 	});
 
-	setMark(displayX, displayY, tableId);
+	$('#mark').html("");
+	loadAllMark(floor);
 }
 
 function setMark(x, y, tableId) {

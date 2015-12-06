@@ -45,6 +45,16 @@ public class MemoryService {
     	}
     }
     
+    @PostConstruct
+    private void initLocation ()  {
+    	int length = cardMapping.values().size();
+    	for(int i = 1; i <= length; i++) {
+    		String cardId = i + "";
+			Location location = new Location("0", cardId, getMappingColor(cardId));
+			locationService.add(location);
+		}
+    }
+    
     /*
 	private static Map<String, String> cardMapping = new HashMap<String, String>() {
 		
@@ -186,7 +196,8 @@ public class MemoryService {
 		} else if (locationSize == 1) {
 			Location existLocation = existLocations.get(0);
 			if (locationId.equals(Constants.LocationDeleteFLag)) { // delete
-				updateLocation(existLocation, OrderUpdateStatus.DELETE);
+				//updateLocation(existLocation, OrderUpdateStatus.DELETE);
+				updateLocation(existLocation, OrderUpdateStatus.UPDATE);
 			} else { // update
 				// Change seat or in the middle of the take away
 				existLocation.setLocationId(locationId);

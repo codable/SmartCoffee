@@ -3,6 +3,7 @@ package com.sc.bus.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,16 @@ public class MapService {
 	public List<Maps> findByLocationId(String locationId) {
 		Query query = new Query();
 		query.addCriteria(Criteria.where("locationId").is(locationId));
+		return mapDAO.find(query);
+	}
+	
+	public void drop() {
+		mapDAO.drop();
+	}
+	
+	public List<Maps> findBySort() {
+		Query query = new Query();
+		query.with(new Sort(new Sort.Order(Sort.Direction.DESC,"locationId"))); 
 		return mapDAO.find(query);
 	}
 }

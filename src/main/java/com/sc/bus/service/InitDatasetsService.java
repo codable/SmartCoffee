@@ -74,7 +74,7 @@ public class InitDatasetsService {
 	}
 	
 	private void saveMap() {
-		Maps m = new Maps("1", 1.2, 2.4);
+		Maps m = new Maps("", "", "1", 1.2, 2.4);
 		mongodb.save(m, Constants.MapsCollectionName);
 	}
 	
@@ -87,6 +87,6 @@ public class InitDatasetsService {
 		InitDatasetsService mk = new InitDatasetsService(mongodb);
 		//mk.saveLocation();
 		//mk.saveOrder();
-		mk.saveMap();
+		mk.saveLocation();
 	}
 }
