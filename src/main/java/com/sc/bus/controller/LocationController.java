@@ -1,7 +1,6 @@
 package com.sc.bus.controller;
 
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
@@ -12,7 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
@@ -34,8 +32,6 @@ public class LocationController {
 	
     @Autowired
     private LocationService locationService;
-    @Autowired
-    private MemoryService memoryService;
     
     @Value("${locationReceiver.port}")
 	private String port;
