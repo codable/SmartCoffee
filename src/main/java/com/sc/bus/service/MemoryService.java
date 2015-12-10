@@ -55,6 +55,10 @@ public class MemoryService {
 		}
     }
     
+    public Map<String, String> getAllCardMapping() {
+    	return cardMapping;
+    }
+    
     /*
 	private static Map<String, String> cardMapping = new HashMap<String, String>() {
 		

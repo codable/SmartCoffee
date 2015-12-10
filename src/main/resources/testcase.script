@@ -1,0 +1,91 @@
+#!/bin/sh
+
+#add location: post, {url}/api/location/{locationid}/{cardid}
+#add order: post, {url}/api/order/{cardid}/{isfinish}
+
+host=http://192.168.1.105:8080/SmartCoffee
+locationUrl=$host/api/location
+orderUrl=$host/api/order
+sleeptime=10
+secondsleep=5
+
+echo "1, no order, no location"
+echo "THe initial state is like this, check GUI display."
+sleep 2
+echo ""
+
+echo "2, no order, with location"
+curl -X POST $locationUrl/1/1
+echo "Check GUI if exist location:1, cardId:1, then reset location data"
+sleep $sleeptime
+curl -X POST $locationUrl/0/1
+sleep $secondsleep
+echo ""
+
+echo "3, with order, no location"
+curl -X POST $orderUrl/1/0
+echo "Check GUI if exist order with cardid:1"
+sleep $sleeptime
+curl -X DELETE $orderUrl
+sleep $secondsleep
+echo ""
+
+echo "4, with order, with location"
+curl -X POST $orderUrl/1/0
+curl -X POST $locationUrl/1/1
+echo "Check GUI if exist order with cardid:1, location:1"
+sleep $sleeptime
+curl -X POST $locationUrl/0/1
+curl -X DELETE $orderUrl
+sleep $secondsleep
+echo ""
+
+echo "5, card locating error"
+echo "location card"
+echo "1		1"
+echo "1		2"
+curl -X POST $locationUrl/1/1
+curl -X POST $locationUrl/1/2
+echo "GUI should notify user bear card locating error"
+sleep $sleeptime
+curl -X POST $locationUrl/0/1
+curl -X POST $locationUrl/0/2
+sleep $secondsleep
+echo ""
+
+echo "6, location change constantly"
+echo "location card"
+echo "1		1"
+echo "2		1"
+curl -X POST $locationUrl/1/1
+curl -X POST $locationUrl/2/1
+echo "This reason is that customer is walking, so we could ignore this situation"
+sleep $sleeptime
+curl -X POST $locationUrl/0/1
+sleep $secondsleep
+echo ""
+
+echo "7, order with same cardid"
+echo "order card location"
+echo "1		1     1"
+echo "2		1     1"
+curl -X POST $locationUrl/1/1
+curl -X POST $orderUrl/1/0
+curl -X POST $orderUrl/1/0
+echo "This reason is that waiter make the mistake, make the order with same bear color."
+echo "GUI should notify user about this error."
+sleep $sleeptime
+curl -X POST $locationUrl/0/1
+curl -X DELETE $orderUrl
+sleep $secondsleep
+echo ""
+
+echo "8, order with none cardid or cardid is not exist"
+echo "order card"
+echo "1	  none"
+curl -X POST $orderUrl/29/0
+echo "In our usage, only have 28 cardids, so in this situation, GUI should notify user bear not exist."
+sleep $sleeptime
+curl -X DELETE $orderUrl
+echo ""
+

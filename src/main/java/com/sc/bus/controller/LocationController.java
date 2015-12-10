@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import com.sc.bus.service.LocationService;
 import com.sc.bus.service.MemoryService;
 import com.sc.model.Location;
+import com.sc.model.Maps;
 
 
 @Controller
@@ -32,9 +33,16 @@ public class LocationController {
 	
     @Autowired
     private LocationService locationService;
+    @Autowired
+    private MemoryService memoryService;
     
     @Value("${locationReceiver.port}")
 	private String port;
+    
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    public @ResponseBody Map<String, String> getAllCardMapping() {
+    	return memoryService.getAllCardMapping();
+    }
     
     /*
      * Used for test
