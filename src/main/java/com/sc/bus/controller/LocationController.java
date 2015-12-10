@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.sc.bus.service.LocationService;
+import com.sc.bus.service.MemoryService;
 import com.sc.model.Location;
 
 
@@ -33,6 +34,8 @@ public class LocationController {
 	
     @Autowired
     private LocationService locationService;
+    @Autowired
+    private MemoryService memoryService;
     
     @Value("${locationReceiver.port}")
 	private String port;
@@ -65,7 +68,9 @@ public class LocationController {
      */
     @RequestMapping(value = "/{id}/{cardId}", method = RequestMethod.POST)
     public @ResponseBody void addLocation(@PathVariable String id, @PathVariable String cardId) {
-    	Location location = new Location(id, cardId, "red");
+    	List<Location> locations = locationService.findByCardId(cardId);
+    	locationService.delete(locations.get(0));
+    	Location location = new Location(id, cardId, MemoryService.getMappingColor(cardId));
 		locationService.add(location);
     }
     
