@@ -31,9 +31,9 @@ $(function() {
     
     retrieveOrder();
     
-    /*setInterval(function() {
+    setInterval(function() {
     	retrieveOrder();
-	}, 3000); //every 3 seconds*/
+	}, 5000); //every 3 seconds
     $('#orderContent a').miniPreview({ prefetch: 'none', width: '900', height: '460', scale: 0.75 });
 
 	
