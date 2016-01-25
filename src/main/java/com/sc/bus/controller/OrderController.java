@@ -2,6 +2,8 @@ package com.sc.bus.controller;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -138,6 +140,16 @@ public class OrderController {
 			orderLocationList.add(orderLocation);
 		}
     	*/
+    	
+    	Collections.sort(orderLocationList,new Comparator<OrderLocation>(){
+            public int compare(OrderLocation arg0, OrderLocation arg1) {
+            	int card1 = Integer.valueOf(arg0.getLocation().getCardId());
+            	int card2 = Integer.valueOf(arg1.getLocation().getCardId());
+            	if(card1 < card2)
+            		return -1;
+                return 1;
+            }
+        });
     	return orderLocationList;
     }
     

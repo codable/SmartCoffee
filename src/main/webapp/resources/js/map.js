@@ -40,7 +40,7 @@ $(function() {
 	});
 	
 	//display all position data or specific one
-	if(typeof x == 'undefined' || typeof y == 'undefined' || typeof locationId == 'undefined') {
+	if(typeof x == 'undefined' || typeof y == 'undefined' || typeof tableId == 'undefined') {
 		loadAllMark(floor);
 	}
 	else {
@@ -186,7 +186,7 @@ function put(table, displayX, displayY, floor) {
 }
 
 function setMark(x, y, tableId) {
-	$('<div style="background-color:red;color:white;width:20px;height:20px;border:1px solid;text-align:center;line-height:20px; ' +
+	$('<div style="background-color:red;color:white;width:30px;height:30px;border:1px solid;text-align:center;line-height:30px; ' +
 			'box-shadow: 0 0 10px yellow;border-radius:15px;position:absolute;left:' + (x - 10) + 'px;top:' + (y-10) + 'px;">' + tableId + '</div>').appendTo('#mark');
 }
 

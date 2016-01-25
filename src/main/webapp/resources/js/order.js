@@ -1,40 +1,40 @@
 $(function() {
-	
-	$("#searchOrder").button().click(function(event) {
-    	event.preventDefault();
-    	var cardId = $("#cardId").val();
-    	var locationId = $("#locationId").val();
-    	var url = 'rs/order?cid=' + cardId + '&lid=' + locationId;
-    	$("#orderContent").jqGrid().setGridParam({url : url}).trigger("reloadGrid");
+    var mapInfo = {};
+	getAjaxRequest("api/map/location", false, function(data){
+		mapInfo = data;
     });
-    
+	
     var retrieveOrder = function() {
-    	getAjaxRequest("rs/order", false, function(data){
-	    	$("#orderContent ul").empty();
-	        $('#orderContentTemplate').tmpl(data).appendTo('#orderContent ul');
-	        
-	        $("#finished-orders").empty();
-	        for(var i in data) {
-	        	var order = data[i];
-	        	if(order.finish) {
-	        		var orderId = order.orderId;
-
-	        		getAjaxRequest("rs/order/" + orderId + "/location", false, function(data){
-				    	var lid = data.location;
-				    	if(lid != "") {
-				    		$('<li>Order <font color="blue">' + orderId + '</font> 已经制作完毕，由服务员递送到桌号：<font color="blue">' + lid + '</font></li>').appendTo("#finished-orders");
-				    	}
-				    });
-	        	}
-	        }
+    	getAjaxRequest("api/order/all", false, function(data){
+	    	//$("#orderContent").empty();
+	    	var locations = [];
+	    	data.forEach(function(e) {
+	    		item = e.location;
+	    		map = mapInfo[item.locationId];
+	    		if(typeof(map) != 'undefined') {
+	    			item.x = map.xPos;
+		    		item.y = map.yPos;
+		    		item.locationDis = map.floor + '层' + map.area + '区';
+		    		item.flag = 1;
+	    		}
+	    		else {
+	    			item.locationDis = item.locationId;
+	    			item.flag = 0;
+	    		}
+	    		locations.push(item);
+	    	});
+	    	$("#orderContent").html("<thead><tr><th>小熊</th><th>号码牌</th><th>位置</th></tr></thead>");
+	        $('#orderContentTemplate').tmpl(locations).appendTo('#orderContent');
+	        //console.log(data);
 	    });
     }
     
     retrieveOrder();
     
-    setInterval(function() {
+    /*setInterval(function() {
     	retrieveOrder();
-	}, 3000); //every 3 seconds
-	
+	}, 3000); //every 3 seconds*/
+    $('#orderContent a').miniPreview({ prefetch: 'none', width: '900', height: '460', scale: 0.75 });
+
 	
 });

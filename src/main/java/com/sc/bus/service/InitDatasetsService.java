@@ -87,6 +87,9 @@ public class InitDatasetsService {
 		InitDatasetsService mk = new InitDatasetsService(mongodb);
 		//mk.saveLocation();
 		//mk.saveOrder();
-		mk.saveLocation();
+		//mk.saveLocation();
+		Location location = new Location("23", "2229", "xx");
+		mongodb.save(location, Constants.LocationCollectionName);
+
 	}
 }

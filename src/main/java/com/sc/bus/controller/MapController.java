@@ -4,7 +4,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -43,7 +45,15 @@ public class MapController {
     public @ResponseBody List<Maps> getAllLocationMap() {
     	return mapService.findAll();
     }
-    
+    @RequestMapping(value = "/location", method = RequestMethod.GET)
+    public @ResponseBody Map<String, Maps> getAllLocationMap2() {
+    	Map<String, Maps> res = new HashMap<String, Maps>();
+    	List<Maps> maps = mapService.findAll();
+    	for(Maps item: maps) {
+    		res.put(item.getLocationId(), item);
+    	}
+    	return res;
+    }
     /*
      * Client will call it at startup, to get each floor's picture
      */
