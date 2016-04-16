@@ -17,17 +17,19 @@ public class Order {
 	private Long orderDate;
 	private Double totalPrice;
 	private Boolean finish;
+	private String bearName;
 
 	public Order() {}
 
 	public Order(String orderId, String cardId, List<Menu> menus,
-			Long orderDate, Double totalPrice, Boolean finish) {
+			Long orderDate, Double totalPrice, Boolean finish, String bearName) {
 		this.orderId = orderId;
 		this.cardId = cardId;
 		this.menus = menus;
 		this.orderDate = orderDate;
 		this.totalPrice = totalPrice;
 		this.finish = finish;
+		this.bearName = bearName;
 	}
 
 	public String getId() {
@@ -86,11 +88,19 @@ public class Order {
 		this.finish = finish;
 	}
 
+
+	public String getBearName() {
+		return bearName;
+	}
+
+	public void setBearName(String bearName) {
+		this.bearName = bearName;
+	}
+
 	@Override
 	public String toString() {
-		return "Order [id=" + id + ", orderId=" + orderId + ", cardId="
-				+ cardId + ", menus=" + menus + ", orderDate=" + orderDate
-				+ ", totalPrice=" + totalPrice + ", finish=" + finish + "]";
+		return "Order [id=" + id + ", orderId=" + orderId + ", cardId=" + cardId + ", menus=" + menus + ", orderDate="
+				+ orderDate + ", totalPrice=" + totalPrice + ", finish=" + finish + ", bearName=" + bearName + "]";
 	}
 
 	

@@ -63,10 +63,10 @@ public class InitDatasetsService {
 		list4.add(menu5);
 		list4.add(menu6);
 		
-		Order order1 = new Order("111", "1", list1, new Date().getTime(), 58.0, false);
-		Order order2 = new Order("222", "2", list2, new Date().getTime(), 632.2, false);
-		Order order3 = new Order("333", "3", list3, new Date().getTime(), 12.2, false);
-		Order order4 = new Order("444", "4", list4, new Date().getTime(), 66.3, false);
+		Order order1 = new Order("111", "1", list1, new Date().getTime(), 58.0, false, null);
+		Order order2 = new Order("222", "2", list2, new Date().getTime(), 632.2, false, null);
+		Order order3 = new Order("333", "3", list3, new Date().getTime(), 12.2, false, null);
+		Order order4 = new Order("444", "4", list4, new Date().getTime(), 66.3, false, null);
 		mongodb.save(order1, Constants.OrderCollectionName);
 		mongodb.save(order2, Constants.OrderCollectionName);
 		mongodb.save(order3, Constants.OrderCollectionName);

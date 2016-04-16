@@ -254,7 +254,7 @@ public class OrderController {
 		Menu menu1 = new Menu("11", "Coffee", 22.0, 1, 1);
 		list.add(menu1);
 		
-		Order order = new Order(UUID.randomUUID().toString(), id, list, new Date().getTime(), 58.0, isFinish);
+		Order order = new Order(UUID.randomUUID().toString(), id, list, new Date().getTime(), 58.0, isFinish, null);
 		orderService.add(order);
     	Location location = new Location(id, id, MemoryService.getMappingColor(id));
 		locationService.add(location);
